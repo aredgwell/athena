@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -40,10 +38,7 @@ func init() {
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize or scaffold .athena/ and managed files",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena init")
-		return nil
-	},
+	RunE:  runInit,
 }
 
 func init() {
@@ -58,10 +53,7 @@ func init() {
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
 	Short: "Upgrade managed files with checksum comparison",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena upgrade")
-		return nil
-	},
+	RunE:  runUpgrade,
 }
 
 func init() {
@@ -73,10 +65,7 @@ func init() {
 var checkCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Validate notes, frontmatter, and schema compliance",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena check")
-		return nil
-	},
+	RunE:  runCheck,
 }
 
 func init() {
@@ -91,10 +80,7 @@ func init() {
 var indexCmd = &cobra.Command{
 	Use:   "index",
 	Short: "Rebuild .ai/index.yaml from notes",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena index")
-		return nil
-	},
+	RunE:  runIndex,
 }
 
 // --- gc ---
@@ -102,10 +88,7 @@ var indexCmd = &cobra.Command{
 var gcCmd = &cobra.Command{
 	Use:   "gc",
 	Short: "Mark stale notes for garbage collection",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena gc")
-		return nil
-	},
+	RunE:  runGC,
 }
 
 func init() {
@@ -118,10 +101,7 @@ func init() {
 var toolsCmd = &cobra.Command{
 	Use:   "tools",
 	Short: "Check tool availability",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena tools")
-		return nil
-	},
+	RunE:  runTools,
 }
 
 func init() {
@@ -133,10 +113,7 @@ func init() {
 var doctorCmd = &cobra.Command{
 	Use:   "doctor",
 	Short: "Run repository diagnostics",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena doctor")
-		return nil
-	},
+	RunE:  runDoctor,
 }
 
 // --- capabilities ---
@@ -144,10 +121,7 @@ var doctorCmd = &cobra.Command{
 var capabilitiesCmd = &cobra.Command{
 	Use:   "capabilities",
 	Short: "Print supported commands and schema versions",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena capabilities")
-		return nil
-	},
+	RunE:  runCapabilities,
 }
 
 // --- report ---
@@ -155,10 +129,7 @@ var capabilitiesCmd = &cobra.Command{
 var reportCmd = &cobra.Command{
 	Use:   "report",
 	Short: "Compute memory effectiveness metrics",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena report")
-		return nil
-	},
+	RunE:  runReport,
 }
 
 // --- changelog ---
@@ -166,10 +137,7 @@ var reportCmd = &cobra.Command{
 var changelogCmd = &cobra.Command{
 	Use:   "changelog",
 	Short: "Update CHANGELOG.md from conventional commits",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena changelog")
-		return nil
-	},
+	RunE:  runChangelog,
 }
 
 func init() {
@@ -210,10 +178,7 @@ var policyCmd = &cobra.Command{
 var policyGateCmd = &cobra.Command{
 	Use:   "gate",
 	Short: "Evaluate PR/revision against policy gates",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena policy gate")
-		return nil
-	},
+	RunE:  runPolicyGate,
 }
 
 func init() {
@@ -226,19 +191,13 @@ func init() {
 var planCmd = &cobra.Command{
 	Use:   "plan",
 	Short: "Compute a deterministic mutation plan",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena plan")
-		return nil
-	},
+	RunE:  runPlan,
 }
 
 var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Execute a stored plan",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena apply")
-		return nil
-	},
+	RunE:  runApply,
 }
 
 func init() {
@@ -248,10 +207,7 @@ func init() {
 var rollbackCmd = &cobra.Command{
 	Use:   "rollback",
 	Short: "Revert a transaction",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena rollback")
-		return nil
-	},
+	RunE:  runRollback,
 }
 
 func init() {
@@ -269,10 +225,7 @@ var securityCmd = &cobra.Command{
 var securityScanCmd = &cobra.Command{
 	Use:   "scan",
 	Short: "Run security scans (gitleaks/actionlint)",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena security scan")
-		return nil
-	},
+	RunE:  runSecurityScan,
 }
 
 func init() {
@@ -292,28 +245,19 @@ var contextCmd = &cobra.Command{
 var contextPackCmd = &cobra.Command{
 	Use:   "pack",
 	Short: "Pack repository context via repomix",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena context pack")
-		return nil
-	},
+	RunE:  runContextPack,
 }
 
 var contextMCPCmd = &cobra.Command{
 	Use:   "mcp",
 	Short: "Start or validate repomix MCP mode",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena context mcp")
-		return nil
-	},
+	RunE:  runContextMCP,
 }
 
 var contextBudgetCmd = &cobra.Command{
 	Use:   "budget",
 	Short: "Estimate context token budget",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena context budget")
-		return nil
-	},
+	RunE:  runContextBudget,
 }
 
 func init() {
@@ -343,37 +287,27 @@ var noteCmd = &cobra.Command{
 var noteNewCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create a new note from template",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena note new")
-		return nil
-	},
+	RunE:  runNoteNew,
 }
 
 var noteCloseCmd = &cobra.Command{
-	Use:   "close",
+	Use:   "close [path]",
 	Short: "Transition a note's status",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena note close")
-		return nil
-	},
+	Args:  cobra.ExactArgs(1),
+	RunE:  runNoteClose,
 }
 
 var notePromoteCmd = &cobra.Command{
-	Use:   "promote",
+	Use:   "promote [path]",
 	Short: "Mark a note as promoted",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena note promote")
-		return nil
-	},
+	Args:  cobra.ExactArgs(1),
+	RunE:  runNotePromote,
 }
 
 var noteListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List notes with optional filters",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena note list")
-		return nil
-	},
+	RunE:  runNoteList,
 }
 
 func init() {
@@ -404,19 +338,13 @@ var reviewCmd = &cobra.Command{
 var reviewPromotionsCmd = &cobra.Command{
 	Use:   "promotions",
 	Short: "List promotion-ready notes",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena review promotions")
-		return nil
-	},
+	RunE:  runReviewPromotions,
 }
 
 var reviewWeeklyCmd = &cobra.Command{
 	Use:   "weekly",
 	Short: "Run weekly review (gc + promotions + check)",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena review weekly")
-		return nil
-	},
+	RunE:  runReviewWeekly,
 }
 
 func init() {
@@ -435,10 +363,7 @@ var commitCmd = &cobra.Command{
 var commitLintCmd = &cobra.Command{
 	Use:   "lint",
 	Short: "Validate commit messages against Conventional Commits",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena commit lint")
-		return nil
-	},
+	RunE:  runCommitLint,
 }
 
 func init() {
@@ -457,19 +382,13 @@ var releaseCmd = &cobra.Command{
 var releaseProposeCmd = &cobra.Command{
 	Use:   "propose",
 	Short: "Generate a release proposal with gate checks",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena release propose")
-		return nil
-	},
+	RunE:  runReleasePropose,
 }
 
 var releaseApproveCmd = &cobra.Command{
 	Use:   "approve",
 	Short: "Approve and execute a release proposal",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena release approve")
-		return nil
-	},
+	RunE:  runReleaseApprove,
 }
 
 func init() {
@@ -492,10 +411,7 @@ var hooksCmd = &cobra.Command{
 var hooksInstallCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Install or update pre-commit hooks",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena hooks install")
-		return nil
-	},
+	RunE:  runHooksInstall,
 }
 
 func init() {
@@ -513,10 +429,7 @@ var optimizeCmd = &cobra.Command{
 var optimizeRecommendCmd = &cobra.Command{
 	Use:   "recommend",
 	Short: "Propose bounded tuning changes from telemetry",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Fprintln(cmd.OutOrStdout(), "athena optimize recommend")
-		return nil
-	},
+	RunE:  runOptimizeRecommend,
 }
 
 func init() {

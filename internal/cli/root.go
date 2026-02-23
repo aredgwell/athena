@@ -18,6 +18,13 @@ tooling with a single Go binary supporting safe upgrades, schema-driven
 feature selection, and optional integrations.`,
 	SilenceUsage:  true,
 	SilenceErrors: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		name := cmd.Name()
+		if name == "version" || name == "completion" || name == "help" {
+			return nil
+		}
+		return initRunContext(cmd)
+	},
 }
 
 func init() {
