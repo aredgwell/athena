@@ -77,3 +77,18 @@ tasks:
     desc: Install athena to $GOPATH/bin
     cmds:
       - go install {{.MAIN}}
+
+  docs:build:
+    desc: Build the documentation site
+    cmds:
+      - hugo --minify
+
+  docs:serve:
+    desc: Serve the documentation site locally
+    cmds:
+      - hugo server --minify
+
+  docs:clean:
+    desc: Remove Hugo build output
+    cmds:
+      - rm -rf public resources

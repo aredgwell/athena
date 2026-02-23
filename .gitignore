@@ -14,5 +14,13 @@
 # Repomix / packed context outputs
 packed-context.xml
 
+# Build artifacts
+bin/
+.task/
+
+# Hugo build output
+public/
+resources/
+
 # Generic backups
 *.bak
