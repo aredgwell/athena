@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Athena runtime artifacts
+.athena/backups/
+.athena/reports/
+.athena/locks/
+.athena/plans/
+.athena/optimization/
+.athena/feature-handoffs/
+.athena/ops-journal.jsonl
+.athena/telemetry.jsonl
+
+# Repomix / packed context outputs
+packed-context.xml
+
+# Generic backups
+*.bak

@@ -1,0 +1,18 @@
+{
+  "output": {
+    "filePath": "packed-context.xml",
+    "style": "xml",
+    "headerText": "CRITICAL AGENT PATH: Read 'AGENTS.md' first, then system context, then ownership boundaries, then stack guides before editing."
+  },
+  "ignore": {
+    "useGitignore": true,
+    "customPatterns": [
+      "packed-context.xml",
+      "site/**",
+      ".ai/**",
+      "yarn.lock",
+      "**/*.svg",
+      "**/*.png"
+    ]
+  }
+}

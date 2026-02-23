@@ -1,0 +1,71 @@
+version: "3"
+
+tasks:
+  index:
+    desc: Rebuild machine-readable .ai index
+    cmds:
+      - ./scripts/ai/reindex.sh
+
+  check:
+    desc: Validate .ai note quality (frontmatter + handoff docs) and rebuild index
+    cmds:
+      - ./scripts/ai/validate-frontmatter.sh
+      - task: index
+
+  review:promotions:
+    desc: List notes that should be promoted to canonical docs
+    cmds:
+      - bash ./scripts/ai/promotion-candidates.sh
+
+  review:weekly:
+    desc: Weekly AI memory hygiene (stale-note review + promotion triage + checks)
+    vars:
+      DAYS: "45"
+    cmds:
+      - task: gc
+        vars:
+          DAYS: "{{.DAYS}}"
+      - task: review:promotions
+      - task: check
+
+  tools:check:
+    desc: Report local CLI tooling availability for AI workflows
+    cmds:
+      - bash ./scripts/ai/check-tools.sh
+
+  tools:check:strict:
+    desc: Fail if required AI workflow tools are missing
+    cmds:
+      - bash ./scripts/ai/check-tools.sh --strict
+
+  note:new:
+    desc: Create a new .ai note (TYPE=context|investigation|troubleshooting|wip|improvement)
+    vars:
+      TITLE: ""
+    requires:
+      vars: [TYPE, SLUG]
+    cmds:
+      - ./scripts/ai/new-note.sh "{{.TYPE}}" "{{.SLUG}}" "{{.TITLE}}"
+
+  note:close:
+    desc: Mark an .ai note as closed/stale/superseded/promoted
+    vars:
+      STATUS: "closed"
+    requires:
+      vars: [PATH]
+    cmds:
+      - ./scripts/ai/close-note.sh "{{.PATH}}" "{{.STATUS}}"
+
+  note:promote:
+    desc: Mark an .ai note as promoted and record canonical target document
+    requires:
+      vars: [PATH, TARGET]
+    cmds:
+      - ./scripts/ai/promote-note.sh "{{.PATH}}" "{{.TARGET}}"
+
+  gc:
+    desc: Mark old active notes as stale (default DAYS=45)
+    vars:
+      DAYS: "45"
+    cmds:
+      - ./scripts/ai/gc.sh "{{.DAYS}}"

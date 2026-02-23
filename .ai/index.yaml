@@ -1,0 +1,27 @@
+version: 1
+generated_at: "2026-02-23T09:38:14Z"
+root: ".ai"
+collections:
+  context: 1
+  investigations: 0
+  troubleshooting: 0
+  wip: 0
+  improvements: 0
+  memory: 1
+  templates: 0
+entries:
+  - path: ".ai/README.md"
+    type: "memory"
+    status: "active"
+    updated: "2026-02-23"
+    title: "AI Memory Root"
+  - path: ".ai/context/session_state.md"
+    type: "context"
+    status: "active"
+    updated: "2026-02-23"
+    title: "Session State"
+  - path: ".ai/memory/plan.md"
+    type: "memory"
+    status: "active"
+    updated: "2026-02-23"
+    title: "Implementation Plan"
