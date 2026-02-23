@@ -1,4 +1,94 @@
 version: "3"
 
+vars:
+  BINARY: athena
+  BUILD_DIR: ./bin
+  MAIN: ./cmd/athena
+
 includes:
   ai: .task/ai.yml
+
+tasks:
+  build:
+    desc: Build the athena binary
+    cmds:
+      - go build -o {{.BUILD_DIR}}/{{.BINARY}} {{.MAIN}}
+    sources:
+      - "**/*.go"
+      - go.mod
+      - go.sum
+    generates:
+      - "{{.BUILD_DIR}}/{{.BINARY}}"
+
+  test:
+    desc: Run all tests
+    cmds:
+      - go test ./... {{.CLI_ARGS}}
+
+  test:verbose:
+    desc: Run all tests with verbose output
+    cmds:
+      - go test -v ./... {{.CLI_ARGS}}
+
+  test:cover:
+    desc: Run tests with coverage report
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -func=coverage.out
+    generates:
+      - coverage.out
+
+  test:cover:html:
+    desc: Open coverage report in browser
+    deps: [test:cover]
+    cmds:
+      - go tool cover -html=coverage.out
+
+  lint:
+    desc: Run go vet and staticcheck
+    cmds:
+      - go vet ./...
+
+  fmt:
+    desc: Format all Go source files
+    cmds:
+      - go fmt ./...
+
+  tidy:
+    desc: Tidy and verify go.mod
+    cmds:
+      - go mod tidy
+      - go mod verify
+
+  clean:
+    desc: Remove build artifacts and coverage files
+    cmds:
+      - rm -rf {{.BUILD_DIR}}
+      - rm -f coverage.out
+
+  check:
+    desc: Run fmt, lint, and tests (CI entrypoint)
+    cmds:
+      - task: fmt
+      - task: lint
+      - task: test
+
+  install:
+    desc: Install athena to $GOPATH/bin
+    cmds:
+      - go install {{.MAIN}}
+
+  docs:build:
+    desc: Build the documentation site
+    cmds:
+      - hugo --minify
+
+  docs:serve:
+    desc: Serve the documentation site locally
+    cmds:
+      - hugo server --minify
+
+  docs:clean:
+    desc: Remove Hugo build output
+    cmds:
+      - rm -rf public resources

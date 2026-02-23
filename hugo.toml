@@ -1,0 +1,84 @@
+baseURL = "https://amr-athena.github.io/athena/"
+title = "Athena CLI"
+enableGitInfo = true
+
+[module]
+[[module.imports]]
+path = "github.com/alex-shpak/hugo-book"
+
+# Mount content/ as the base, then overlay repo-root and docs/ files
+# into the content tree so Hugo can serve them without duplication.
+[[module.mounts]]
+source = "content"
+target = "content"
+
+[[module.mounts]]
+source = "ATHENA.md"
+target = "content/docs/specification.md"
+
+[[module.mounts]]
+source = "AGENTS.md"
+target = "content/docs/agents/execution-protocol.md"
+
+[[module.mounts]]
+source = "AGENT_TOOLING.md"
+target = "content/docs/agents/tooling.md"
+
+[[module.mounts]]
+source = "AGENT_METRICS.md"
+target = "content/docs/agents/metrics.md"
+
+[[module.mounts]]
+source = "CONTRIBUTING.md"
+target = "content/docs/contributing/guide.md"
+
+[[module.mounts]]
+source = "CHANGELOG.md"
+target = "content/docs/contributing/changelog.md"
+
+[[module.mounts]]
+source = "docs/guides"
+target = "content/docs/guides"
+
+[[module.mounts]]
+source = "docs/system-context.md"
+target = "content/docs/reference/system-context.md"
+
+[[module.mounts]]
+source = "config/README.md"
+target = "content/docs/reference/configuration.md"
+
+[[module.mounts]]
+source = "config/athena/AGENTS.md"
+target = "content/docs/agents/stack-guide.md"
+
+[[module.mounts]]
+source = "docs/workflows"
+target = "content/docs/agents/workflows"
+
+[[module.mounts]]
+source = "docs/implementation"
+target = "content/docs/implementation"
+
+# Static assets mount (default)
+[[module.mounts]]
+source = "static"
+target = "static"
+
+[params]
+BookTheme = "auto"
+BookToC = true
+BookSection = "docs"
+BookSearch = true
+BookRepo = "https://github.com/amr-athena/athena"
+BookEditPath = "edit/main"
+
+[markup.goldmark.renderer]
+unsafe = true
+
+[markup.goldmark.parser.attribute]
+block = true
+
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 4

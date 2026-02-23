@@ -14,7 +14,8 @@ Before modifying code, follow this path in order:
 5. Read `AGENT_TOOLING.md` for preferred local binaries and command patterns.
 6. If improving Athena Framework itself, read `AGENT_METRICS.md`.
 7. If task is procedural, read the relevant `docs/workflows/` or `docs/guides/` file.
-8. If implementing Athena CLI features, follow `docs/implementation/START_HERE.md`.
+8. If integrating Athena into a repository, read `docs/guides/integration-guide.md`.
+9. If implementing Athena CLI features, follow `docs/implementation/START_HERE.md`.
 
 ## 2. Development Loop
 

@@ -1,0 +1,18 @@
+# Athena CLI Configuration
+version = 2
+
+[features]
+ai-memory = true
+agents-md = true
+claude-shim = true
+editorconfig = true
+
+[gc]
+days = 45
+
+[policy]
+default = "standard"
+
+[telemetry]
+enabled = true
+path = ".athena/telemetry.jsonl"
