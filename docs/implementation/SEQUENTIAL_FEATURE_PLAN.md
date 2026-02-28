@@ -1,6 +1,6 @@
 # Athena CLI Sequential Implementation Plan
 
-Features F00-F17, F19, and F20 are implemented and passing (`go test ./...`). F18 is deferred.
+Features F00-F17, F19, and F20 are implemented and passing (`go test ./...`). F18 is withdrawn.
 
 ## Completed Features
 
@@ -27,19 +27,19 @@ Features F00-F17, F19, and F20 are implemented and passing (`go test ./...`). F1
 | F19 | MCP Server Mode | `internal/mcp` |
 | F20 | Content Search | `internal/search`, `internal/index`, `internal/cli`, `internal/mcp` |
 
-## F18 - Linear Integration (Future)
+## F18 - External Issue Tracker Integration (Withdrawn)
 
-- Goal: Outbound issue creation from policy gate failures and report outputs.
-- Dependencies: F12, F08
-- Scope:
-  - `internal/integrations/linear`
-  - Policy gate failures → create/update Linear issues with failure details and fix hints
-  - Report outputs (stale notes, promotion candidates) → create Linear backlog issues
-  - Configuration via `[integrations.linear]` in `athena.toml` (API key via env var)
-- Status: **Deferred**
-- Design notes:
-  - Outbound only (Athena → Linear); Linear remains source of truth for work tracking
-  - Athena is a knowledge layer, not an issue tracker
+- Status: **Withdrawn** — Athena intentionally avoids coupling to specific issue
+  trackers (Linear, Jira, GitHub Issues, etc.). All outputs use open standards
+  and machine-readable formats that external tools or agents can consume:
+  - Conventional Commits (`athena commit lint`)
+  - Structured JSON envelopes (`--format json` on every command)
+  - SARIF reports (`athena security scan --report-format sarif`)
+  - Policy gate failures with `policy_id`, `severity`, `summary`, `fix_hint`
+  - MCP resources/tools for agent-driven workflows
+- Design principle: Athena is a knowledge layer that produces standardised
+  outputs. Ingestion into issue trackers is the responsibility of downstream
+  tools or agents, not Athena itself.
 
 ## F19 - MCP Server Mode (Implemented)
 
