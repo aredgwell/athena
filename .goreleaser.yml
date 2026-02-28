@@ -17,11 +17,25 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - -s -w
+      - -s -w -X github.com/amr-athena/athena/internal/cli.version={{.Version}}
 
 archives:
   - format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+brews:
+  - repository:
+      owner: amr-athena
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: https://amr-athena.github.io/athena/
+    description: "AI-native repository lifecycle manager"
+    license: MIT
+    install: |
+      bin.install "athena"
+    test: |
+      system "#{bin}/athena", "version"
 
 checksum:
   name_template: checksums.txt

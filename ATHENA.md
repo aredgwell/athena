@@ -94,7 +94,7 @@ the working memory.
 | `note list`        | List notes with optional status/type filters                   |
 | `context query`    | Filtered note retrieval by component, type, status             |
 | `context timeline` | Chronological view of notes for a component                    |
-| `context search`   | BM25 lexical search over note contents                         |
+| `context search`   | BM25 search with Porter stemming, fuzzy matching, and snippets |
 
 ### Governance Commands
 
@@ -515,7 +515,7 @@ internal/
   changelog/     # changelog generation
   telemetry/     # telemetry append/read
   mcp/           # MCP server (tools + resources over stdio)
-  search/        # BM25 lexical search over note contents
+  search/        # BM25 search (Porter stemmer, fuzzy matching, snippets)
   templates/     # go:embed template tree
 ```
 

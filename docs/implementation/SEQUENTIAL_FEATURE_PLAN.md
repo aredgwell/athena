@@ -51,6 +51,9 @@ Features F00-F17, F19, and F20 are implemented and passing (`go test ./...`). F1
 ## F20 - Content Search (Implemented)
 
 - BM25 lexical search over note contents (`internal/search` package)
+- Porter stemmer for linguistically-aware token conflation
+- Fuzzy matching via Levenshtein distance (edit distance 1) when exact terms miss
+- Snippet extraction: results include matching text context from document body
 - Search index built during `athena index`, stored at `.ai/search-index.json`
 - `athena context search "query" [--limit N]` CLI command
 - `context_search` MCP tool
