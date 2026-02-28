@@ -2,31 +2,24 @@
 
 ## Purpose
 
-This repository defines and implements the Athena CLI, a Go-based replacement
-for shell-script AI memory tooling.
+This repository implements the Athena CLI — a Go-based scaffolder and lifecycle
+manager for AI-native repository workflows.
 
-## Current State
-
-- Canonical product specification: `ATHENA.md`
-- Sequential implementation plan: `docs/implementation/SEQUENTIAL_FEATURE_PLAN.md`
-- Agent execution protocol: `AGENTS.md`
-- Legacy shell tooling (reference behavior): `scripts/ai/*`
-
-## Architecture Direction
+## Architecture
 
 - Language: Go 1.23+
 - CLI framework: Cobra + Viper
 - Config file: `athena.toml`
-- Primary implementation root: `cmd/athena`, `internal/*`
+- Implementation: `cmd/athena`, `internal/*`
 
 ## Constraints
 
-- Keep behavior deterministic and idempotent.
-- Preserve data safety for upgrades/migrations through backups + checksums.
-- Prefer machine-readable contracts for agent workflows.
+- Deterministic and idempotent behavior.
+- Data safety for upgrades/migrations via backups + checksums.
+- Machine-readable contracts for agent workflows.
 
 ## Sources of Truth
 
-1. `ATHENA.md`
-2. `AGENTS.md`
-3. `docs/implementation/SEQUENTIAL_FEATURE_PLAN.md`
+1. `ATHENA.md` — product specification
+2. `AGENTS.md` — agent execution protocol
+3. `docs/implementation/SEQUENTIAL_FEATURE_PLAN.md` — implementation plan

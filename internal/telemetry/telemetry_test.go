@@ -261,3 +261,22 @@ func TestTokenCorrelation(t *testing.T) {
 		t.Errorf("total cost for run: got %f, want ~0.016", totalCost)
 	}
 }
+
+func TestActorField(t *testing.T) {
+	dir := t.TempDir()
+	s := NewStore(filepath.Join(dir, "telemetry.jsonl"))
+
+	rec := Record{
+		Command: "check",
+		Actor:   "claude-code",
+	}
+
+	if err := s.Append(rec); err != nil {
+		t.Fatalf("Append failed: %v", err)
+	}
+
+	records, _ := s.ReadAll()
+	if records[0].Actor != "claude-code" {
+		t.Errorf("expected actor claude-code, got %s", records[0].Actor)
+	}
+}

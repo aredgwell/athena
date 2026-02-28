@@ -36,7 +36,7 @@ func TestVersionCommand(t *testing.T) {
 }
 
 func TestGlobalFlags(t *testing.T) {
-	flags := []string{"verbose", "debug", "quiet", "format", "policy", "lock-timeout"}
+	flags := []string{"verbose", "debug", "quiet", "format", "policy", "lock-timeout", "actor"}
 	for _, name := range flags {
 		f := rootCmd.PersistentFlags().Lookup(name)
 		if f == nil {

@@ -202,8 +202,8 @@ func ConfigForPreset(preset string) Config {
 		},
 		GC: GCConfig{Days: 45},
 		Tools: ToolsConfig{
-			Required:    []string{"git", "rg", "jq", "yq", "task"},
-			Recommended: []string{"repomix", "gitleaks", "actionlint", "pre-commit", "difft", "fzf", "shfmt", "shellcheck"},
+			Required:    []string{"git", "rg", "jq", "yq"},
+			Recommended: []string{"repomix", "gitleaks", "actionlint", "pre-commit", "difft", "fzf"},
 		},
 		Telemetry: TelemetryConfig{
 			Enabled:              true,

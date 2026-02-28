@@ -3,11 +3,11 @@
 Run before implementation:
 
 ```bash
-task ai:tools:check
-task ai:check
+athena doctor
+athena check
 ```
 
-If `task ai:check` fails due to missing baseline `.ai` notes, create/update:
+If `athena check` fails due to missing baseline `.ai` notes, create/update:
 
 - `.ai/README.md`
 - `.ai/context/session_state.md`
