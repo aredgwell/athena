@@ -12,12 +12,12 @@ import (
 type EventType string
 
 const (
-	EventTxStarted    EventType = "tx_started"
-	EventStepApplied  EventType = "step_applied"
+	EventTxStarted      EventType = "tx_started"
+	EventStepApplied    EventType = "step_applied"
 	EventStepRolledBack EventType = "step_rolled_back"
-	EventTxCommitted  EventType = "tx_committed"
-	EventTxFailed     EventType = "tx_failed"
-	EventTxRolledBack EventType = "tx_rolled_back"
+	EventTxCommitted    EventType = "tx_committed"
+	EventTxFailed       EventType = "tx_failed"
+	EventTxRolledBack   EventType = "tx_rolled_back"
 )
 
 // JournalEntry is a single entry in the append-only operations journal.

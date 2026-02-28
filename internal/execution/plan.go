@@ -13,10 +13,10 @@ import (
 type StepAction string
 
 const (
-	ActionWrite    StepAction = "write"
+	ActionWrite     StepAction = "write"
 	ActionOverwrite StepAction = "overwrite"
-	ActionDelete   StepAction = "delete"
-	ActionExec     StepAction = "exec"
+	ActionDelete    StepAction = "delete"
+	ActionExec      StepAction = "exec"
 )
 
 // PlanStep is a single mutation in an execution plan.

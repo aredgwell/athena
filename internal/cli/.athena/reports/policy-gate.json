@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "target_ref": "refs/pull/1/head",
+  "passed": [
+    "check",
+    "security_scan",
+    "commit_lint"
+  ]
+}

@@ -27,11 +27,11 @@ type Section struct {
 
 // ChangelogResult holds the generated changelog content.
 type ChangelogResult struct {
-	Version     string    `json:"version,omitempty"`
-	Sections    []Section `json:"sections"`
-	Markdown    string    `json:"markdown"`
-	DryRun      bool      `json:"dry_run"`
-	EntryCount  int       `json:"entry_count"`
+	Version    string    `json:"version,omitempty"`
+	Sections   []Section `json:"sections"`
+	Markdown   string    `json:"markdown"`
+	DryRun     bool      `json:"dry_run"`
+	EntryCount int       `json:"entry_count"`
 }
 
 // Options controls changelog generation.

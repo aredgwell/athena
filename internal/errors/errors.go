@@ -45,10 +45,10 @@ const (
 
 // AthenaError is a structured, machine-readable error with actionable remediation.
 type AthenaError struct {
-	Code         string `json:"error_code"`
-	Message      string `json:"message"`
+	Code          string `json:"error_code"`
+	Message       string `json:"message"`
 	ActionableFix string `json:"actionable_fix"`
-	PolicyID     string `json:"policy_id,omitempty"`
+	PolicyID      string `json:"policy_id,omitempty"`
 }
 
 // Error implements the error interface.

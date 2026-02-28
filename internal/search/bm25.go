@@ -23,11 +23,11 @@ const (
 
 // SearchIndex is a serializable BM25 inverted index.
 type SearchIndex struct {
-	Version       int                 `json:"version"`
-	Generated     string              `json:"generated"`
-	DocCount      int                 `json:"doc_count"`
-	AvgDocLen     float64             `json:"avg_doc_len"`
-	Documents     []Document          `json:"documents"`
+	Version       int                  `json:"version"`
+	Generated     string               `json:"generated"`
+	DocCount      int                  `json:"doc_count"`
+	AvgDocLen     float64              `json:"avg_doc_len"`
+	Documents     []Document           `json:"documents"`
 	InvertedIndex map[string][]Posting `json:"inverted_index"`
 }
 

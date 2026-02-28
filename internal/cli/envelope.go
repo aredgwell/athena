@@ -10,13 +10,13 @@ import (
 
 // Envelope is the common JSON output wrapper for all Athena commands.
 type Envelope struct {
-	Command    string              `json:"command"`
-	OK         bool                `json:"ok"`
-	Policy     string              `json:"policy,omitempty"`
-	DurationMS int64               `json:"duration_ms"`
-	Warnings   []string            `json:"warnings"`
+	Command    string                `json:"command"`
+	OK         bool                  `json:"ok"`
+	Policy     string                `json:"policy,omitempty"`
+	DurationMS int64                 `json:"duration_ms"`
+	Warnings   []string              `json:"warnings"`
 	Errors     []*atherr.AthenaError `json:"errors"`
-	Data       any                 `json:"data,omitempty"`
+	Data       any                   `json:"data,omitempty"`
 }
 
 // NewEnvelope creates a success envelope for a command.

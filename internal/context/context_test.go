@@ -9,9 +9,9 @@ import (
 
 // mockRunner simulates external command execution.
 type mockRunner struct {
-	available  bool
-	runOutput  string
-	runErr     error
+	available bool
+	runOutput string
+	runErr    error
 }
 
 func (m *mockRunner) Run(name string, args ...string) ([]byte, error) {
