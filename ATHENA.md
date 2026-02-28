@@ -52,6 +52,9 @@ athena hooks install [--pre-commit]
 athena report
 athena optimize recommend [--window 30d]
 
+# MCP — Model Context Protocol server
+athena mcp
+
 # Utility
 athena version
 athena completion {bash|zsh|fish|powershell}
@@ -120,6 +123,22 @@ Telemetry-derived insights. Require `.athena/telemetry.jsonl` data to be useful.
 | ------------------- | -------------------------------------------------- |
 | `report`            | Compute working memory effectiveness metrics       |
 | `optimize recommend`| Propose config tuning from telemetry (no auto-apply)|
+
+### MCP Server
+
+`athena mcp` starts a Model Context Protocol server over stdio, exposing
+Athena commands as MCP tools and resources. Eliminates shell-spawning
+overhead for IDE agents (Claude Code, Cursor, Windsurf).
+
+**Resources** (read-only, URI-addressable):
+`athena://capabilities`, `athena://config`, `athena://notes`,
+`athena://index`, `athena://report`
+
+**Tools** (callable actions):
+`note_new`, `note_close`, `note_promote`, `note_read`, `note_list`,
+`check`, `check_fix`, `index_rebuild`, `gc_scan`, `doctor`, `report`
+
+Transport: stdio only. Semantics are identical to CLI invocation.
 
 ## Manifest Schema
 
@@ -458,11 +477,12 @@ Every non-zero JSON response includes at least one `error_code` with an
 
 ## Implementation
 
-- **Language**: Go 1.23+
+- **Language**: Go 1.24+
 - **CLI**: `cobra` + `viper`
 - **Template embedding**: `go:embed`
 - **YAML**: `gopkg.in/yaml.v3`
 - **TOML**: `github.com/BurntSushi/toml`
+- **MCP**: `github.com/modelcontextprotocol/go-sdk`
 - **TTY**: `golang.org/x/term`
 - **External CLIs** (optional): `repomix`, `gitleaks`, `actionlint`, `pre-commit`
 
@@ -491,6 +511,7 @@ internal/
   commitlint/    # conventional commit linting
   changelog/     # changelog generation
   telemetry/     # telemetry append/read
+  mcp/           # MCP server (tools + resources over stdio)
   templates/     # go:embed template tree
 ```
 

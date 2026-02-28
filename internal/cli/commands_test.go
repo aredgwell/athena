@@ -41,6 +41,7 @@ func TestAllCommandsWired(t *testing.T) {
 		{[]string{"release", "approve", "--help"}, "approve"},
 		{[]string{"hooks", "install", "--help"}, "install"},
 		{[]string{"optimize", "recommend", "--help"}, "recommend"},
+		{[]string{"mcp", "--help"}, "mcp"},
 	}
 
 	for _, tc := range commands {

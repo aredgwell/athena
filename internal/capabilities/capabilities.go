@@ -49,6 +49,7 @@ var AllCommands = []string{
 	"release approve",
 	"hooks install",
 	"optimize recommend",
+	"mcp",
 	"version",
 	"completion",
 }

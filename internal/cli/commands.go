@@ -17,6 +17,7 @@ func init() {
 	rootCmd.AddCommand(reportCmd)
 	rootCmd.AddCommand(changelogCmd)
 	rootCmd.AddCommand(completionCmd)
+	rootCmd.AddCommand(mcpCmd)
 
 	// Grouped commands
 	rootCmd.AddCommand(policyCmd)
@@ -166,6 +167,17 @@ var completionCmd = &cobra.Command{
 		}
 		return nil
 	},
+}
+
+// --- mcp ---
+
+var mcpCmd = &cobra.Command{
+	Use:   "mcp",
+	Short: "Start MCP server over stdio",
+	Long: `Start a Model Context Protocol (MCP) server that exposes Athena
+commands as tools and resources over stdio transport. Intended for
+integration with AI agents (Claude Code, Cursor, etc.).`,
+	RunE: runMCP,
 }
 
 // --- policy gate ---
