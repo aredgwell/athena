@@ -11,8 +11,8 @@ func TestCapabilitiesCommand(t *testing.T) {
 	if !payload.CommandsComplete {
 		t.Error("expected commands_complete=true")
 	}
-	if len(payload.Commands) != 32 {
-		t.Errorf("expected 32 commands, got %d", len(payload.Commands))
+	if len(payload.Commands) != 33 {
+		t.Errorf("expected 33 commands, got %d", len(payload.Commands))
 	}
 
 	// Verify key commands are present

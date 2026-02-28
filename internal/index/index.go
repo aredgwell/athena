@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/amr-athena/athena/internal/notes"
+	"github.com/amr-athena/athena/internal/search"
 	"gopkg.in/yaml.v3"
 )
 
@@ -74,6 +75,32 @@ func Build(notesDir string) (*Index, error) {
 	}
 
 	return idx, nil
+}
+
+// BuildSearch generates a BM25 search index from notes in the given directory.
+func BuildSearch(notesDir string) (*search.SearchIndex, error) {
+	allNotes, err := notes.ListNotes(notesDir, "", "")
+	if err != nil {
+		return nil, err
+	}
+
+	docs := make([]search.IndexableDoc, 0, len(allNotes))
+	for _, n := range allNotes {
+		relPath, _ := filepath.Rel(filepath.Dir(notesDir), n.Path)
+		if relPath == "" {
+			relPath = n.Path
+		}
+		docs = append(docs, search.IndexableDoc{
+			Path:   relPath,
+			Title:  n.Frontmatter.Title,
+			Type:   n.Frontmatter.Type,
+			Status: n.Frontmatter.Status,
+			Tags:   n.Frontmatter.Tags,
+			Body:   n.Body,
+		})
+	}
+
+	return search.BuildIndex(docs), nil
 }
 
 // Write writes the index as YAML to the given path.

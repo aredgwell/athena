@@ -61,6 +61,35 @@ func TestIndexWrite(t *testing.T) {
 	}
 }
 
+func TestBuildSearch(t *testing.T) {
+	dir := setupNotes(t)
+	idx, err := BuildSearch(dir)
+	if err != nil {
+		t.Fatalf("BuildSearch: %v", err)
+	}
+	if idx.DocCount != 3 {
+		t.Errorf("doc count: got %d, want 3", idx.DocCount)
+	}
+	if idx.Version != 1 {
+		t.Errorf("version: got %d, want 1", idx.Version)
+	}
+	if len(idx.Documents) != 3 {
+		t.Errorf("documents: got %d, want 3", len(idx.Documents))
+	}
+}
+
+func TestBuildSearchEmpty(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), ".ai")
+	os.MkdirAll(dir, 0o755)
+	idx, err := BuildSearch(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if idx.DocCount != 0 {
+		t.Errorf("doc count: got %d, want 0", idx.DocCount)
+	}
+}
+
 func TestIndexEmpty(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), ".ai")
 	os.MkdirAll(dir, 0o755)
