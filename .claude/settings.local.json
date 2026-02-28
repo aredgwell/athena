@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go version)",
+      "Bash(go mod init github.com/anthropics/athena-cli)",
+      "Bash(go mod init github.com/amr-devops/athena-cli)",
+      "Bash(go mod init github.com/aredgwell/athena-cli)",
+      "Bash(go get github.com/spf13/cobra@latest github.com/spf13/viper@latest)",
+      "Bash(git checkout main)",
+      "Bash(git pull origin main)",
+      "Bash(git rebase --abort)",
+      "Bash(git reset --hard origin/main)",
+      "Bash(git checkout -b feat/f20-content-search)",
+      "Bash(go test ./internal/search/... -v)",
+      "Bash(go test ./internal/search/...)",
+      "Bash(go test ./internal/index/...)",
+      "Bash(go build ./internal/cli/...)",
+      "Bash(go test ./internal/mcp/...)",
+      "Bash(go test ./...)",
+      "Bash(go build ./cmd/athena)",
+      "Bash(git add ATHENA.md docs/implementation/SEQUENTIAL_FEATURE_PLAN.md internal/capabilities/capabilities.go internal/capabilities/capabilities_test.go internal/cli/cmd_index.go internal/cli/cmd_context_search.go internal/cli/commands.go internal/cli/commands_test.go internal/index/index.go internal/index/index_test.go internal/mcp/mcp_test.go internal/mcp/tools.go internal/search/)"
+    ]
+  }
+}

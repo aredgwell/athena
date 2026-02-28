@@ -26,16 +26,16 @@ type ParsedCommit struct {
 
 // LintResult holds the outcome of linting a single commit message.
 type LintResult struct {
-	Message string   `json:"message"`
-	Valid   bool     `json:"valid"`
+	Message string        `json:"message"`
+	Valid   bool          `json:"valid"`
 	Parsed  *ParsedCommit `json:"parsed,omitempty"`
-	Errors  []string `json:"errors,omitempty"`
+	Errors  []string      `json:"errors,omitempty"`
 }
 
 // LintOptions controls commit lint behavior.
 type LintOptions struct {
-	ValidTypes  []string
-	ValidScopes []string // empty means any scope allowed
+	ValidTypes   []string
+	ValidScopes  []string // empty means any scope allowed
 	RequireScope bool
 }
 

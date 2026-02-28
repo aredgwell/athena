@@ -2,10 +2,19 @@
 
 Repo-local AI working memory scaffolding, lifecycle management, and governance checks.
 
+## Install
+
+```bash
+# Homebrew
+brew install amr-athena/tap/athena
+
+# Or from source (Go 1.25+)
+go install github.com/amr-athena/athena/cmd/athena@latest
+```
+
 ## Quick Start
 
 ```bash
-go build -o athena ./cmd/athena
 athena init --preset standard
 athena doctor
 athena check
@@ -22,12 +31,14 @@ athena check
 
 ## Documentation
 
-- [ATHENA.md](ATHENA.md) — full product specification
+- [Full docs](https://amr-athena.github.io/athena/) — specification, guides, and reference
+- [ATHENA.md](ATHENA.md) — product specification
 - [AGENTS.md](AGENTS.md) — agent execution protocol
 - [CONTRIBUTING.md](CONTRIBUTING.md) — contribution guidelines
 
 ## Test
 
 ```bash
-go test ./...
+go test ./...        # unit + package tests
+go test ./e2e/...    # end-to-end binary tests
 ```

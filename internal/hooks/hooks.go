@@ -20,11 +20,11 @@ type InstallOptions struct {
 
 // InstallResult holds the outcome of hook installation.
 type InstallResult struct {
-	ConfigPath  string   `json:"config_path,omitempty"`
-	HookPath    string   `json:"hook_path,omitempty"`
-	Created     []string `json:"created,omitempty"`
-	Updated     []string `json:"updated,omitempty"`
-	DryRun      bool     `json:"dry_run"`
+	ConfigPath string   `json:"config_path,omitempty"`
+	HookPath   string   `json:"hook_path,omitempty"`
+	Created    []string `json:"created,omitempty"`
+	Updated    []string `json:"updated,omitempty"`
+	DryRun     bool     `json:"dry_run"`
 }
 
 // Install generates and optionally installs pre-commit hooks.

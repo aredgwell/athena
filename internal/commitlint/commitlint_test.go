@@ -73,7 +73,7 @@ func TestCommitLintCommand(t *testing.T) {
 
 	t.Run("require scope", func(t *testing.T) {
 		result := Lint("feat: no scope", LintOptions{
-			ValidTypes:  DefaultTypes(),
+			ValidTypes:   DefaultTypes(),
 			RequireScope: true,
 		})
 		if result.Valid {

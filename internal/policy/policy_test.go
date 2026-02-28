@@ -200,9 +200,9 @@ func TestGateWriteReport(t *testing.T) {
 
 func TestGateMultipleFailures(t *testing.T) {
 	checks := map[string]CheckFunc{
-		"check": failCheck("ATHENA-POL-003", "schema mismatch", "Run check --fix"),
+		"check":         failCheck("ATHENA-POL-003", "schema mismatch", "Run check --fix"),
 		"security_scan": failCheck("ATHENA-TOOL-002", "secrets found", "Remove secrets"),
-		"commit_lint": passCheck(),
+		"commit_lint":   passCheck(),
 	}
 
 	gate := NewGate(config.PolicyGatesConfig{

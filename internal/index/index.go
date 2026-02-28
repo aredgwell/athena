@@ -13,10 +13,10 @@ import (
 
 // Index is the .ai/index.yaml structure.
 type Index struct {
-	Version   int       `yaml:"version"`
-	Generated string    `yaml:"generated"`
-	Counts    Counts    `yaml:"counts"`
-	Entries   []Entry   `yaml:"entries"`
+	Version   int     `yaml:"version"`
+	Generated string  `yaml:"generated"`
+	Counts    Counts  `yaml:"counts"`
+	Entries   []Entry `yaml:"entries"`
 }
 
 // Counts summarizes note statuses.

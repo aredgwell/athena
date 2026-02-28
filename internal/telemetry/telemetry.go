@@ -11,24 +11,24 @@ import (
 
 // Record is a single telemetry event in JSONLines format.
 type Record struct {
-	Timestamp       time.Time         `json:"timestamp"`
-	Command         string            `json:"command"`
-	RunID           string            `json:"run_id,omitempty"`
-	TaskID          string            `json:"task_id,omitempty"`
-	AgentName       string            `json:"agent_name,omitempty"`
-	Model           string            `json:"model,omitempty"`
-	ExecutionTimeMS int64             `json:"execution_time_ms"`
-	PromptTokens    int               `json:"prompt_tokens,omitempty"`
-	CompletionTokens int              `json:"completion_tokens,omitempty"`
-	TotalTokens     int               `json:"total_tokens,omitempty"`
-	CostUSD         float64           `json:"cost_usd,omitempty"`
-	IsTTY           bool              `json:"is_tty"`
-	ExitCode        int               `json:"exit_code"`
-	ErrorCode       *string           `json:"error_code"`
-	PolicyLevel     string            `json:"policy_level,omitempty"`
-	IsDryRun        bool              `json:"is_dry_run"`
-	Actor           string            `json:"actor,omitempty"`
-	Context         map[string]string `json:"context,omitempty"`
+	Timestamp        time.Time         `json:"timestamp"`
+	Command          string            `json:"command"`
+	RunID            string            `json:"run_id,omitempty"`
+	TaskID           string            `json:"task_id,omitempty"`
+	AgentName        string            `json:"agent_name,omitempty"`
+	Model            string            `json:"model,omitempty"`
+	ExecutionTimeMS  int64             `json:"execution_time_ms"`
+	PromptTokens     int               `json:"prompt_tokens,omitempty"`
+	CompletionTokens int               `json:"completion_tokens,omitempty"`
+	TotalTokens      int               `json:"total_tokens,omitempty"`
+	CostUSD          float64           `json:"cost_usd,omitempty"`
+	IsTTY            bool              `json:"is_tty"`
+	ExitCode         int               `json:"exit_code"`
+	ErrorCode        *string           `json:"error_code"`
+	PolicyLevel      string            `json:"policy_level,omitempty"`
+	IsDryRun         bool              `json:"is_dry_run"`
+	Actor            string            `json:"actor,omitempty"`
+	Context          map[string]string `json:"context,omitempty"`
 }
 
 // Store provides telemetry read/write operations.

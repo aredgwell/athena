@@ -31,13 +31,13 @@ func (ExecRunner) LookPath(name string) (string, error) {
 
 // PackOptions controls context pack behavior.
 type PackOptions struct {
-	Profile       string
-	Changed       bool
-	Stdout        bool
-	OutputPath    string
-	DryRun        bool
+	Profile         string
+	Changed         bool
+	Stdout          bool
+	OutputPath      string
+	DryRun          bool
 	PassthroughArgs []string
-	PolicyLevel   config.PolicyLevel
+	PolicyLevel     config.PolicyLevel
 }
 
 // PackResult holds the outcome of a pack operation.
@@ -69,11 +69,11 @@ type BudgetOptions struct {
 
 // BudgetResult holds the outcome of a budget check.
 type BudgetResult struct {
-	Profile       string `json:"profile"`
-	EstimatedTokens int  `json:"estimated_tokens"`
-	MaxTokens     int    `json:"max_tokens,omitempty"`
-	WithinBudget  bool   `json:"within_budget"`
-	Output        string `json:"output,omitempty"`
+	Profile         string `json:"profile"`
+	EstimatedTokens int    `json:"estimated_tokens"`
+	MaxTokens       int    `json:"max_tokens,omitempty"`
+	WithinBudget    bool   `json:"within_budget"`
+	Output          string `json:"output,omitempty"`
 }
 
 // Service orchestrates repomix context operations.

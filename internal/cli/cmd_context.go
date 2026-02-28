@@ -19,11 +19,11 @@ func runContextPack(cmd *cobra.Command, args []string) error {
 
 	svc := context.NewService(rc.cfg.Context, context.ExecRunner{})
 	result, err := svc.Pack(context.PackOptions{
-		Profile:    profile,
-		Changed:    changed,
-		Stdout:     stdout,
-		OutputPath: output,
-		DryRun:     dryRun,
+		Profile:     profile,
+		Changed:     changed,
+		Stdout:      stdout,
+		OutputPath:  output,
+		DryRun:      dryRun,
 		PolicyLevel: rc.policy,
 	})
 	if err != nil {

@@ -31,23 +31,23 @@ const (
 
 // Config is the top-level athena.toml manifest.
 type Config struct {
-	Version            int                 `toml:"version"`
-	Features           Features            `toml:"features"`
-	Templates          map[string]string   `toml:"templates"`
-	Scopes             map[string]string   `toml:"scopes"`
-	GC                 GCConfig            `toml:"gc"`
-	Tools              ToolsConfig         `toml:"tools"`
-	Telemetry          TelemetryConfig     `toml:"telemetry"`
-	Policy             PolicyConfig        `toml:"policy"`
-	PolicyGates        PolicyGatesConfig   `toml:"policy_gates"`
-	Lock               LockConfig          `toml:"lock"`
-	Execution          ExecutionConfig     `toml:"execution"`
-	Context            ContextConfig       `toml:"context"`
-	Security           SecurityConfig      `toml:"security"`
-	Changelog          ChangelogConfig     `toml:"changelog"`
+	Version             int                `toml:"version"`
+	Features            Features           `toml:"features"`
+	Templates           map[string]string  `toml:"templates"`
+	Scopes              map[string]string  `toml:"scopes"`
+	GC                  GCConfig           `toml:"gc"`
+	Tools               ToolsConfig        `toml:"tools"`
+	Telemetry           TelemetryConfig    `toml:"telemetry"`
+	Policy              PolicyConfig       `toml:"policy"`
+	PolicyGates         PolicyGatesConfig  `toml:"policy_gates"`
+	Lock                LockConfig         `toml:"lock"`
+	Execution           ExecutionConfig    `toml:"execution"`
+	Context             ContextConfig      `toml:"context"`
+	Security            SecurityConfig     `toml:"security"`
+	Changelog           ChangelogConfig    `toml:"changelog"`
 	ConventionalCommits ConventionalConfig `toml:"conventional_commits"`
-	Hooks              HooksConfig         `toml:"hooks"`
-	Optimize           OptimizeConfig      `toml:"optimize"`
+	Hooks               HooksConfig        `toml:"hooks"`
+	Optimize            OptimizeConfig     `toml:"optimize"`
 }
 
 // Features controls which files are scaffolded and managed.
@@ -81,10 +81,10 @@ type ToolsConfig struct {
 
 // TelemetryConfig controls local telemetry behavior.
 type TelemetryConfig struct {
-	Enabled              bool   `toml:"enabled"`
-	Path                 string `toml:"path"`
-	RequireRunIDForAgents bool  `toml:"require_run_id_for_agents"`
-	CaptureTokenUsage    bool   `toml:"capture_token_usage"`
+	Enabled               bool   `toml:"enabled"`
+	Path                  string `toml:"path"`
+	RequireRunIDForAgents bool   `toml:"require_run_id_for_agents"`
+	CaptureTokenUsage     bool   `toml:"capture_token_usage"`
 }
 
 // PolicyConfig sets the default policy level.
@@ -115,10 +115,10 @@ func (l LockConfig) TTLDuration() (time.Duration, error) {
 
 // ExecutionConfig controls plan/apply behavior.
 type ExecutionConfig struct {
-	PlanDir             string        `toml:"plan_dir"`
-	JournalPath         string        `toml:"journal_path"`
-	DefaultMode         ExecutionMode `toml:"default_mode"`
-	EnforceIdempotency  bool          `toml:"enforce_idempotency"`
+	PlanDir            string        `toml:"plan_dir"`
+	JournalPath        string        `toml:"journal_path"`
+	DefaultMode        ExecutionMode `toml:"default_mode"`
+	EnforceIdempotency bool          `toml:"enforce_idempotency"`
 }
 
 // ContextConfig controls repomix integration.
@@ -190,7 +190,7 @@ func Default() Config {
 // ConfigForPreset returns a Config with feature flags set for the given preset.
 func ConfigForPreset(preset string) Config {
 	cfg := Config{
-		Version: SchemaVersion,
+		Version:  SchemaVersion,
 		Features: standardFeatures(),
 		Scopes: map[string]string{
 			"app":   "Application code",
@@ -206,12 +206,12 @@ func ConfigForPreset(preset string) Config {
 			Recommended: []string{"repomix", "gitleaks", "actionlint", "pre-commit", "difft", "fzf"},
 		},
 		Telemetry: TelemetryConfig{
-			Enabled:              true,
-			Path:                 ".athena/telemetry.jsonl",
+			Enabled:               true,
+			Path:                  ".athena/telemetry.jsonl",
 			RequireRunIDForAgents: true,
-			CaptureTokenUsage:    true,
+			CaptureTokenUsage:     true,
 		},
-		Policy:      PolicyConfig{Default: PolicyStandard},
+		Policy: PolicyConfig{Default: PolicyStandard},
 		PolicyGates: PolicyGatesConfig{
 			Enabled:        true,
 			ReportPath:     ".athena/reports/policy-gate.json",
@@ -253,7 +253,7 @@ func ConfigForPreset(preset string) Config {
 			RequireScope: false,
 			Types:        []string{"feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert"},
 		},
-		Hooks:    HooksConfig{PreCommit: true},
+		Hooks: HooksConfig{PreCommit: true},
 		Optimize: OptimizeConfig{
 			Enabled:      true,
 			WindowDays:   30,
@@ -268,7 +268,7 @@ func ConfigForPreset(preset string) Config {
 		cfg.Features = minimalFeatures()
 	case PresetFull:
 		cfg.Features = fullFeatures()
-	// standard is the default, already set above
+		// standard is the default, already set above
 	}
 
 	return cfg
