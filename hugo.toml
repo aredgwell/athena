@@ -53,10 +53,6 @@ source = "config/athena/AGENTS.md"
 target = "content/docs/agents/stack-guide.md"
 
 [[module.mounts]]
-source = "docs/workflows"
-target = "content/docs/agents/workflows"
-
-[[module.mounts]]
 source = "docs/implementation"
 target = "content/docs/implementation"
 

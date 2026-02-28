@@ -179,7 +179,89 @@ athena report --format json
 
 ---
 
-## 4. Context Packing for LLM Prompts
+## 4. MCP Server for IDE Agents
+
+`athena mcp` starts a [Model Context Protocol](https://modelcontextprotocol.io/) server over stdio, exposing Athena commands as MCP tools and resources. This eliminates shell-spawning overhead for IDE agents and gives them structured access to your repository's working memory.
+
+### Supported clients
+
+Any MCP-compatible client works. Common examples: Claude Code, Cursor, Windsurf, Zed.
+
+### Claude Code
+
+Add to your project's `.claude/settings.json` (or `~/.claude/settings.json` for global):
+
+```json
+{
+  "mcpServers": {
+    "athena": {
+      "command": "athena",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "athena": {
+      "command": "athena",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Windsurf
+
+Add to `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "athena": {
+      "command": "athena",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Available MCP resources
+
+| URI | Description |
+|-----|-------------|
+| `athena://capabilities` | Command inventory and schema versions |
+| `athena://config` | Current `athena.toml` configuration |
+| `athena://notes` | All notes with frontmatter metadata |
+| `athena://index` | Note index (`.ai/index.yaml`) |
+| `athena://report` | Effectiveness metrics |
+
+### Available MCP tools
+
+| Tool | Description | Mutates? |
+|------|-------------|----------|
+| `note_new` | Create a note | Yes |
+| `note_close` | Transition note status | Yes |
+| `note_promote` | Promote note to canonical docs | Yes |
+| `note_read` | Read a note's content | No |
+| `note_list` | List notes with filters | No |
+| `check` | Validate frontmatter | No |
+| `check_fix` | Validate and auto-fix | Yes |
+| `index_rebuild` | Rebuild index and search | Yes |
+| `gc_scan` | Mark stale notes | Yes |
+| `doctor` | Run diagnostics | No |
+| `report` | Compute metrics | No |
+| `context_search` | BM25 full-text search | No |
+
+---
+
+## 5. Context Packing for LLM Prompts
 
 The `context` command group wraps [repomix](https://github.com/yamadashy/repomix) to generate token-optimised repository snapshots for LLM consumption.
 
@@ -227,7 +309,7 @@ strip_diff = true
 
 ---
 
-## 5. Validation and Health Checks
+## 6. Validation and Health Checks
 
 ### Continuous validation
 
@@ -273,7 +355,7 @@ athena review weekly --days 7
 
 ---
 
-## 6. Policy Gates and Security
+## 7. Policy Gates and Security
 
 ### Policy levels
 
@@ -312,7 +394,7 @@ athena security scan --report-format sarif
 
 ---
 
-## 7. Plan/Apply Execution Model
+## 8. Plan/Apply Execution Model
 
 For high-stakes mutations, Athena supports a two-phase execution model.
 
@@ -353,7 +435,7 @@ Re-running any mutating command with identical inputs and repo state is a no-op.
 
 ---
 
-## 8. Release Workflow
+## 9. Release Workflow
 
 ### Commit linting
 
@@ -388,7 +470,7 @@ Release proposals run all policy gates before allowing approval.
 
 ---
 
-## 9. Telemetry and Optimisation
+## 10. Telemetry and Optimisation
 
 ### Local-only telemetry
 
@@ -417,7 +499,7 @@ Analyses telemetry over the specified window and proposes bounded configuration 
 
 ---
 
-## 10. Configuration Reference
+## 11. Configuration Reference
 
 ### Minimal `athena.toml`
 
@@ -503,7 +585,7 @@ auto_apply  = false
 
 ---
 
-## 11. CI Integration
+## 12. CI Integration
 
 ### GitHub Actions example
 
@@ -546,7 +628,7 @@ This generates a `.pre-commit-config.yaml` that runs `athena check` and `athena 
 
 ---
 
-## 12. Best Practices for Maximum Agent Effectiveness
+## 13. Best Practices for Maximum Agent Effectiveness
 
 ### Structure knowledge as notes, not comments
 
@@ -615,7 +697,7 @@ This creates a feedback loop: telemetry feeds reports, reports identify ineffici
 
 ---
 
-## 13. Troubleshooting
+## 14. Troubleshooting
 
 | Symptom | Diagnostic | Fix |
 |---------|-----------|-----|
