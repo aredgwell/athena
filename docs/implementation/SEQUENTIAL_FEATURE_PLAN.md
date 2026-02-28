@@ -1,6 +1,6 @@
 # Athena CLI Sequential Implementation Plan
 
-Features F00-F17 are implemented and passing (`go test ./...`). F18 is deferred.
+Features F00-F17 and F19 are implemented and passing (`go test ./...`). F18 is deferred.
 
 ## Completed Features
 
@@ -24,6 +24,7 @@ Features F00-F17 are implemented and passing (`go test ./...`). F18 is deferred.
 | F15 | Optimize Recommend | `internal/optimize` |
 | F16 | CLI Wiring and End-to-End Contracts | `internal/cli`, `cmd/athena/main.go` |
 | F17 | Hardening + Golden + Integration Suite | `internal/cli` (integration tests) |
+| F19 | MCP Server Mode | `internal/mcp` |
 
 ## F18 - Linear Integration (Future)
 
@@ -39,20 +40,12 @@ Features F00-F17 are implemented and passing (`go test ./...`). F18 is deferred.
   - Outbound only (Athena → Linear); Linear remains source of truth for work tracking
   - Athena is a knowledge layer, not an issue tracker
 
-## F19 - MCP Server Mode (Future)
+## F19 - MCP Server Mode (Implemented)
 
-- Goal: Expose Athena commands as Model Context Protocol tools/resources over stdio.
-- Dependencies: F16
-- Scope:
-  - `athena mcp` command that starts a local MCP server over stdio
-  - Read-only commands (`context query`, `context timeline`, `capabilities`, `note list`, `index`) → MCP Resources
-  - Mutating commands (`note new`, `note close`, `note promote`, `check --fix`) → MCP Tools
-  - Evaluate Go MCP libraries (e.g. `github.com/mark3labs/mcp-go`)
-- Status: **Deferred**
-- Design notes:
-  - Eliminates shell-spawning overhead for IDE agents (Cursor, Windsurf)
-  - Transport: stdio only (no HTTP server)
-  - Must preserve identical semantics to CLI invocation
+- Uses official Go MCP SDK (`github.com/modelcontextprotocol/go-sdk` v1.4.0)
+- 5 resources (capabilities, config, notes, index, report)
+- 11 tools (note_new, note_close, note_promote, note_read, note_list, check, check_fix, index_rebuild, gc_scan, doctor, report)
+- Transport: stdio only
 
 ## F20 - Content Search (Future)
 
