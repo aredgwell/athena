@@ -13,6 +13,7 @@ import (
 	"github.com/amr-athena/athena/internal/index"
 	"github.com/amr-athena/athena/internal/notes"
 	"github.com/amr-athena/athena/internal/report"
+	"github.com/amr-athena/athena/internal/search"
 	"github.com/amr-athena/athena/internal/validate"
 )
 
@@ -50,6 +51,11 @@ type checkArgs struct {
 
 type gcScanArgs struct {
 	Days int `json:"days,omitempty" jsonschema:"Staleness threshold in days (default: from config or 45)"`
+}
+
+type contextSearchArgs struct {
+	Query string `json:"query" jsonschema:"Search query text"`
+	Limit int    `json:"limit,omitempty" jsonschema:"Maximum results to return (default 10)"`
 }
 
 func boolPtr(b bool) *bool { return &b }
@@ -143,6 +149,16 @@ func registerTools(srv *sdkmcp.Server, baseDir string) {
 			OpenWorldHint:   boolPtr(false),
 		},
 	}, reportToolHandler(baseDir))
+
+	sdkmcp.AddTool(srv, &sdkmcp.Tool{
+		Name:        "context_search",
+		Description: "Search note contents using BM25 relevance ranking",
+		Annotations: &sdkmcp.ToolAnnotations{
+			ReadOnlyHint:    true,
+			DestructiveHint: boolPtr(false),
+			OpenWorldHint:   boolPtr(false),
+		},
+	}, contextSearchHandler(baseDir))
 }
 
 // jsonResult marshals v to indented JSON and wraps it in a CallToolResult.
@@ -297,9 +313,22 @@ func indexRebuildHandler(baseDir string) sdkmcp.ToolHandlerFor[struct{}, any] {
 		if err := index.Write(idx, indexPath); err != nil {
 			return nil, nil, err
 		}
+
+		// Build search index alongside metadata index.
+		searchIdx, err := index.BuildSearch(aiDir)
+		if err != nil {
+			return nil, nil, err
+		}
+		searchPath := filepath.Join(aiDir, "search-index.json")
+		if err := search.WriteIndex(searchIdx, searchPath); err != nil {
+			return nil, nil, err
+		}
+
 		r, err := jsonResult(map[string]any{
-			"entries": len(idx.Entries),
-			"path":    ".ai/index.yaml",
+			"entries":     len(idx.Entries),
+			"search_docs": searchIdx.DocCount,
+			"path":        ".ai/index.yaml",
+			"search_path": ".ai/search-index.json",
 		})
 		return r, nil, err
 	}
@@ -353,6 +382,34 @@ func reportToolHandler(baseDir string) sdkmcp.ToolHandlerFor[struct{}, any] {
 			return nil, nil, err
 		}
 		r, err := jsonResult(metrics)
+		return r, nil, err
+	}
+}
+
+func contextSearchHandler(baseDir string) sdkmcp.ToolHandlerFor[contextSearchArgs, any] {
+	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args contextSearchArgs) (*sdkmcp.CallToolResult, any, error) {
+		if args.Query == "" {
+			r, _ := errResult("query is required")
+			return r, nil, nil
+		}
+		limit := args.Limit
+		if limit <= 0 {
+			limit = 10
+		}
+
+		searchPath := filepath.Join(baseDir, ".ai", "search-index.json")
+		idx, err := search.ReadIndex(searchPath)
+		if err != nil {
+			r, _ := errResult("search index not found: run 'athena index' first")
+			return r, nil, nil
+		}
+
+		results := idx.Query(args.Query, limit)
+		r, err := jsonResult(map[string]any{
+			"query":   args.Query,
+			"total":   len(results),
+			"results": results,
+		})
 		return r, nil, err
 	}
 }

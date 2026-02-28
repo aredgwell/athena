@@ -9,7 +9,9 @@ import (
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"github.com/amr-athena/athena/internal/index"
 	"github.com/amr-athena/athena/internal/notes"
+	"github.com/amr-athena/athena/internal/search"
 )
 
 // setupTestDir creates a minimal repo structure for MCP handler tests.
@@ -286,6 +288,10 @@ func TestIndexRebuildTool(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(dir, ".ai", "index.yaml")); os.IsNotExist(err) {
 		t.Error("expected .ai/index.yaml to be created")
 	}
+	// Verify search-index.json was written.
+	if _, err := os.Stat(filepath.Join(dir, ".ai", "search-index.json")); os.IsNotExist(err) {
+		t.Error("expected .ai/search-index.json to be created")
+	}
 }
 
 func TestGCScanTool(t *testing.T) {
@@ -328,6 +334,58 @@ func TestReportTool(t *testing.T) {
 	}
 }
 
+func TestContextSearchTool(t *testing.T) {
+	dir := setupTestDir(t)
+	createTestNote(t, dir, "context", "auth-test", "Authentication Analysis")
+
+	// Build search index.
+	aiDir := filepath.Join(dir, ".ai")
+	searchIdx, err := index.BuildSearch(aiDir)
+	if err != nil {
+		t.Fatalf("BuildSearch: %v", err)
+	}
+	if err := search.WriteIndex(searchIdx, filepath.Join(aiDir, "search-index.json")); err != nil {
+		t.Fatalf("WriteIndex: %v", err)
+	}
+
+	handler := contextSearchHandler(dir)
+	result, _, err := handler(context.Background(), nil, contextSearchArgs{
+		Query: "authentication",
+		Limit: 5,
+	})
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	text := result.Content[0].(*sdkmcp.TextContent).Text
+	if !strings.Contains(text, "auth") {
+		t.Errorf("expected auth in results, got %s", text)
+	}
+}
+
+func TestContextSearchToolMissingIndex(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := contextSearchHandler(dir)
+	result, _, err := handler(context.Background(), nil, contextSearchArgs{Query: "test"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !result.IsError {
+		t.Error("expected error for missing index")
+	}
+}
+
+func TestContextSearchToolEmptyQuery(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := contextSearchHandler(dir)
+	result, _, err := handler(context.Background(), nil, contextSearchArgs{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !result.IsError {
+		t.Error("expected error for empty query")
+	}
+}
+
 // --- Server registration test ---
 
 func TestServerRegistration(t *testing.T) {
@@ -353,7 +411,7 @@ func TestServerRegistration(t *testing.T) {
 	expectedTools := []string{
 		"note_new", "note_close", "note_promote", "note_read",
 		"note_list", "check", "check_fix", "index_rebuild",
-		"gc_scan", "doctor", "report",
+		"gc_scan", "doctor", "report", "context_search",
 	}
 
 	toolNames := make(map[string]bool)

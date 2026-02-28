@@ -36,6 +36,7 @@ athena note promote --target TARGET PATH
 athena note list  [--status STATUS] [--type TYPE]
 athena context query [--component COMPONENT] [--type TYPE] [--status STATUS] [--format json|text]
 athena context timeline --component COMPONENT [--format json|text]
+athena context search "QUERY" [--limit N]
 
 # Governance — policy and commit hygiene
 athena policy gate [--pr REF]
@@ -93,6 +94,7 @@ the working memory.
 | `note list`        | List notes with optional status/type filters                   |
 | `context query`    | Filtered note retrieval by component, type, status             |
 | `context timeline` | Chronological view of notes for a component                    |
+| `context search`   | BM25 lexical search over note contents                         |
 
 ### Governance Commands
 
@@ -136,7 +138,8 @@ overhead for IDE agents (Claude Code, Cursor, Windsurf).
 
 **Tools** (callable actions):
 `note_new`, `note_close`, `note_promote`, `note_read`, `note_list`,
-`check`, `check_fix`, `index_rebuild`, `gc_scan`, `doctor`, `report`
+`check`, `check_fix`, `index_rebuild`, `gc_scan`, `doctor`, `report`,
+`context_search`
 
 Transport: stdio only. Semantics are identical to CLI invocation.
 
@@ -512,6 +515,7 @@ internal/
   changelog/     # changelog generation
   telemetry/     # telemetry append/read
   mcp/           # MCP server (tools + resources over stdio)
+  search/        # BM25 lexical search over note contents
   templates/     # go:embed template tree
 ```
 

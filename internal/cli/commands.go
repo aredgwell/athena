@@ -272,10 +272,18 @@ var contextBudgetCmd = &cobra.Command{
 	RunE:  runContextBudget,
 }
 
+var contextSearchCmd = &cobra.Command{
+	Use:   "search [query]",
+	Short: "Search note contents using BM25 relevance ranking",
+	Args:  cobra.ExactArgs(1),
+	RunE:  runContextSearch,
+}
+
 func init() {
 	contextCmd.AddCommand(contextPackCmd)
 	contextCmd.AddCommand(contextMCPCmd)
 	contextCmd.AddCommand(contextBudgetCmd)
+	contextCmd.AddCommand(contextSearchCmd)
 
 	contextPackCmd.Flags().String("profile", "", "Context profile: review, handoff, or release")
 	contextPackCmd.Flags().Bool("changed", false, "Pack only changed files")
@@ -287,6 +295,8 @@ func init() {
 
 	contextBudgetCmd.Flags().String("profile", "", "Profile to estimate")
 	contextBudgetCmd.Flags().Int("max-tokens", 0, "Maximum token budget")
+
+	contextSearchCmd.Flags().Int("limit", 10, "Maximum number of results")
 }
 
 // --- note new / close / promote / list ---

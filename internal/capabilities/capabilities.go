@@ -36,6 +36,7 @@ var AllCommands = []string{
 	"context pack",
 	"context mcp",
 	"context budget",
+	"context search",
 	"note new",
 	"note close",
 	"note promote",
