@@ -22,12 +22,9 @@ var stopwords = map[string]struct{}{
 	"your": {},
 }
 
-// suffixes to strip during simple stemming, longest first.
-var suffixes = []string{"tion", "ment", "ness", "ing", "est", "ly", "er", "ed"}
-
 // Tokenize splits text into normalized tokens suitable for BM25 indexing.
 // It lowercases, splits on non-alphanumeric boundaries, filters stopwords,
-// strips common suffixes, and drops tokens shorter than 2 characters.
+// applies Porter stemming, and drops tokens shorter than 2 characters.
 func Tokenize(text string) []string {
 	lower := strings.ToLower(text)
 
@@ -44,18 +41,11 @@ func Tokenize(text string) []string {
 		if _, ok := stopwords[w]; ok {
 			continue
 		}
-		tokens = append(tokens, stem(w))
+		stemmed := porterStem(w)
+		if len(stemmed) < 2 {
+			continue
+		}
+		tokens = append(tokens, stemmed)
 	}
 	return tokens
-}
-
-// stem applies simple suffix stripping. The remaining stem must be at
-// least 3 characters to avoid over-stemming short words.
-func stem(word string) string {
-	for _, suf := range suffixes {
-		if strings.HasSuffix(word, suf) && len(word)-len(suf) >= 3 {
-			return word[:len(word)-len(suf)]
-		}
-	}
-	return word
 }

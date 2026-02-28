@@ -3,6 +3,7 @@ package search
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -16,9 +17,8 @@ func TestTokenize_Basic(t *testing.T) {
 
 func TestTokenize_Punctuation(t *testing.T) {
 	tokens := Tokenize("auth-middleware (v2)")
-	want := []string{"auth", "middlewar", "v2"} // "middleware" stems to "middlewar" (-e suffix not stripped, but no — actually suffix "re" doesn't match)
-	// Actually let's check: "middleware" doesn't end in any of our suffixes, so it stays as-is
-	want = []string{"auth", "middleware", "v2"}
+	// Porter stemmer: "middleware" → step5 strips trailing 'e' → "middlewar"
+	want := []string{"auth", "middlewar", "v2"}
 	assertTokens(t, tokens, want)
 }
 
@@ -37,10 +37,9 @@ func TestTokenize_MinLength(t *testing.T) {
 
 func TestTokenize_Stemming(t *testing.T) {
 	tokens := Tokenize("authenticating authentication configured")
-	// "authenticating" → strip "ing" → "authenticat" (len 11, stem 8 ≥3 ✓)
-	// "authentication" → strip "tion" → "authentica" (len 14, stem 10 ≥3 ✓)
-	// "configured" → strip "ed" → "configur" (len 10, stem 8 ≥3 ✓)
-	want := []string{"authenticat", "authentica", "configur"}
+	// Porter stemmer conflates both "authenticating" and "authentication" → "authent"
+	// "configured" → step1b strips -ed → "configur"
+	want := []string{"authent", "authent", "configur"}
 	assertTokens(t, tokens, want)
 }
 
@@ -53,8 +52,8 @@ func TestTokenize_Empty(t *testing.T) {
 
 func TestTokenize_MarkdownSyntax(t *testing.T) {
 	tokens := Tokenize("## Header\n- list item\n```code block```")
-	// "##"/"```" split away; "header" stems to "head" (strip -er)
-	want := []string{"head", "list", "item", "code", "block"}
+	// Porter stemmer: "header" stays "header" (measure("head")=1, step4 needs >1)
+	want := []string{"header", "list", "item", "code", "block"}
 	assertTokens(t, tokens, want)
 }
 
@@ -84,7 +83,7 @@ func TestBuildIndex_SingleDoc(t *testing.T) {
 	if len(idx.InvertedIndex) == 0 {
 		t.Error("expected non-empty inverted index")
 	}
-	// "auth" should appear in title (3x boost) + body via "authentication" stem
+	// "auth" appears in title (3x boost). "authentication" stems to "authent" (separate term).
 	if _, ok := idx.InvertedIndex["auth"]; !ok {
 		t.Error("expected 'auth' in inverted index (from title)")
 	}
@@ -249,6 +248,185 @@ func TestReadIndex_Corrupt(t *testing.T) {
 	if err == nil {
 		t.Error("expected error for corrupt file")
 	}
+}
+
+// --- Porter stemmer tests ---
+
+func TestPorterStem_Basics(t *testing.T) {
+	cases := []struct {
+		input, want string
+	}{
+		{"caresses", "caress"},
+		{"ponies", "poni"},
+		{"cats", "cat"},
+		{"feed", "feed"},
+		{"agreed", "agre"},
+		{"plastered", "plaster"},
+		{"motoring", "motor"},
+		{"sing", "sing"},
+		{"conflated", "conflat"},
+		{"troubling", "troubl"},
+		{"sized", "size"},
+		{"hopping", "hop"},
+		{"falling", "fall"},
+		{"happy", "happi"},
+		{"sky", "sky"},
+		{"relational", "relat"},
+		{"conditional", "condit"},
+		{"rational", "ration"},
+		{"allowance", "allow"},
+		{"digitizer", "digit"},
+		{"triplicate", "triplic"},
+		{"formative", "form"},
+		{"formalize", "formal"},
+		{"electriciti", "electr"},
+		{"hopeful", "hope"},
+		{"goodness", "good"},
+		{"revival", "reviv"},
+		{"allowance", "allow"},
+		{"inference", "infer"},
+		{"airliner", "airlin"},
+		{"controllable", "control"},
+		{"effective", "effect"},
+	}
+	for _, tc := range cases {
+		got := porterStem(tc.input)
+		if got != tc.want {
+			t.Errorf("porterStem(%q) = %q, want %q", tc.input, got, tc.want)
+		}
+	}
+}
+
+func TestPorterStem_Conflation(t *testing.T) {
+	// Key property: related words should stem to the same root.
+	groups := [][]string{
+		{"connect", "connected", "connecting", "connection"},
+		{"organize", "organizes", "organizing"},
+		{"generate", "generated", "generating", "generation"},
+	}
+	for _, group := range groups {
+		stems := make(map[string]struct{})
+		for _, w := range group {
+			stems[porterStem(w)] = struct{}{}
+		}
+		if len(stems) > 1 {
+			t.Errorf("expected same stem for %v, got multiple: %v", group, stems)
+		}
+	}
+}
+
+// --- Snippet tests ---
+
+func TestExtractSnippet_MatchFound(t *testing.T) {
+	body := "First sentence about nothing. Second sentence about authentication tokens. Third sentence about databases."
+	snippet := ExtractSnippet(body, "authentication", 150)
+	if snippet == "" {
+		t.Fatal("expected non-empty snippet")
+	}
+	if !containsAny(snippet, "authentication", "authent") {
+		t.Errorf("snippet should contain matching region, got: %s", snippet)
+	}
+}
+
+func TestExtractSnippet_NoMatch(t *testing.T) {
+	body := "This body has no relevant terms."
+	snippet := ExtractSnippet(body, "zyxwvut", 150)
+	// Should return truncated beginning when no match found
+	if snippet == "" {
+		t.Error("expected fallback snippet")
+	}
+}
+
+func TestExtractSnippet_EmptyBody(t *testing.T) {
+	snippet := ExtractSnippet("", "query", 150)
+	if snippet != "" {
+		t.Errorf("expected empty snippet for empty body, got: %s", snippet)
+	}
+}
+
+func TestExtractSnippet_EmptyQuery(t *testing.T) {
+	snippet := ExtractSnippet("some body text", "", 150)
+	if snippet != "" {
+		t.Errorf("expected empty snippet for empty query, got: %s", snippet)
+	}
+}
+
+// --- Fuzzy matching tests ---
+
+func TestLevenshtein(t *testing.T) {
+	cases := []struct {
+		a, b string
+		dist int
+	}{
+		{"", "", 0},
+		{"abc", "", 3},
+		{"", "abc", 3},
+		{"abc", "abc", 0},
+		{"abc", "abd", 1},
+		{"abc", "abcd", 1},
+		{"kitten", "sitting", 3},
+	}
+	for _, tc := range cases {
+		got := levenshtein(tc.a, tc.b)
+		if got != tc.dist {
+			t.Errorf("levenshtein(%q, %q) = %d, want %d", tc.a, tc.b, got, tc.dist)
+		}
+	}
+}
+
+func TestFuzzyLookup(t *testing.T) {
+	index := map[string][]Posting{
+		"auth":     {{DocIdx: 0, Freq: 1}},
+		"author":   {{DocIdx: 1, Freq: 1}},
+		"database": {{DocIdx: 2, Freq: 1}},
+	}
+	// "autj" is distance 1 from "auth"
+	matches := fuzzyLookup("autj", index, 1)
+	if len(matches) != 1 || matches[0] != "auth" {
+		t.Errorf("expected [auth], got %v", matches)
+	}
+
+	// "auxx" is distance 2 from "auth" — should not match at distance 1
+	matches = fuzzyLookup("auxx", index, 1)
+	if len(matches) != 0 {
+		t.Errorf("expected no matches for distance 1, got %v", matches)
+	}
+}
+
+func TestQuery_FuzzyMatch(t *testing.T) {
+	docs := []IndexableDoc{
+		{Path: "a.md", Title: "Auth Setup", Body: "authentication details"},
+	}
+	idx := BuildIndex(docs)
+	// "autk" is a typo of "auth" (single substitution, edit distance 1)
+	results := idx.Query("autk", 10)
+	if len(results) == 0 {
+		t.Error("expected fuzzy match for 'autk' → 'auth'")
+	}
+}
+
+func TestQuery_SnippetPresent(t *testing.T) {
+	docs := []IndexableDoc{
+		{Path: "a.md", Title: "Auth Setup", Body: "Configure authentication tokens and API keys."},
+	}
+	idx := BuildIndex(docs)
+	results := idx.Query("auth", 10)
+	if len(results) == 0 {
+		t.Fatal("expected results")
+	}
+	if results[0].Snippet == "" {
+		t.Error("expected non-empty snippet in search result")
+	}
+}
+
+func containsAny(s string, substrs ...string) bool {
+	lower := strings.ToLower(s)
+	for _, sub := range substrs {
+		if strings.Contains(lower, strings.ToLower(sub)) {
+			return true
+		}
+	}
+	return false
 }
 
 // --- helpers ---

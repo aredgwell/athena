@@ -35,6 +35,9 @@ func runContextSearch(cmd *cobra.Command, args []string) error {
 		for i, r := range results {
 			fmt.Fprintf(w, "%d. [%.3f] %s\n", i+1, r.Score, r.Title)
 			fmt.Fprintf(w, "   Path: %s  Type: %s  Status: %s\n", r.Path, r.Type, r.Status)
+			if r.Snippet != "" {
+				fmt.Fprintf(w, "   %s\n", r.Snippet)
+			}
 		}
 		if len(results) == 0 {
 			fmt.Fprintln(w, "No results found.")

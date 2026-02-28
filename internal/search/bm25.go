@@ -31,14 +31,18 @@ type SearchIndex struct {
 	InvertedIndex map[string][]Posting `json:"inverted_index"`
 }
 
+// maxSummaryLen is the maximum length of the stored body summary.
+const maxSummaryLen = 500
+
 // Document represents an indexed note's metadata.
 type Document struct {
-	Path   string   `json:"path"`
-	Title  string   `json:"title"`
-	Type   string   `json:"type"`
-	Status string   `json:"status"`
-	Tags   []string `json:"tags,omitempty"`
-	DocLen int      `json:"doc_len"`
+	Path    string   `json:"path"`
+	Title   string   `json:"title"`
+	Type    string   `json:"type"`
+	Status  string   `json:"status"`
+	Tags    []string `json:"tags,omitempty"`
+	DocLen  int      `json:"doc_len"`
+	Summary string   `json:"summary,omitempty"`
 }
 
 // Posting records a term's frequency in a specific document.
@@ -49,12 +53,13 @@ type Posting struct {
 
 // SearchResult is a ranked search hit.
 type SearchResult struct {
-	Path   string   `json:"path"`
-	Title  string   `json:"title"`
-	Type   string   `json:"type"`
-	Status string   `json:"status"`
-	Score  float64  `json:"score"`
-	Tags   []string `json:"tags,omitempty"`
+	Path    string   `json:"path"`
+	Title   string   `json:"title"`
+	Type    string   `json:"type"`
+	Status  string   `json:"status"`
+	Score   float64  `json:"score"`
+	Tags    []string `json:"tags,omitempty"`
+	Snippet string   `json:"snippet,omitempty"`
 }
 
 // IndexableDoc is the input for BuildIndex. Decoupled from the notes
@@ -83,13 +88,19 @@ func BuildIndex(docs []IndexableDoc) *SearchIndex {
 	for i, doc := range docs {
 		tokens := buildDocTokens(doc)
 
+		summary := doc.Body
+		if len(summary) > maxSummaryLen {
+			summary = summary[:maxSummaryLen]
+		}
+
 		idx.Documents[i] = Document{
-			Path:   doc.Path,
-			Title:  doc.Title,
-			Type:   doc.Type,
-			Status: doc.Status,
-			Tags:   doc.Tags,
-			DocLen: len(tokens),
+			Path:    doc.Path,
+			Title:   doc.Title,
+			Type:    doc.Type,
+			Status:  doc.Status,
+			Tags:    doc.Tags,
+			DocLen:  len(tokens),
+			Summary: summary,
 		}
 		totalLen += len(tokens)
 
@@ -137,8 +148,14 @@ func buildDocTokens(doc IndexableDoc) []string {
 	return tokens
 }
 
+// FuzzyMaxDist is the maximum edit distance for fuzzy matching.
+// Set to 0 to disable fuzzy matching.
+const FuzzyMaxDist = 1
+
 // Query searches the index and returns up to limit results sorted by
 // descending BM25 score. Only documents with a positive score are returned.
+// Fuzzy matching (edit distance 1) is used when exact terms miss.
+// Snippets are extracted from stored document summaries.
 func (idx *SearchIndex) Query(query string, limit int) []SearchResult {
 	queryTerms := Tokenize(query)
 	if len(queryTerms) == 0 {
@@ -148,6 +165,23 @@ func (idx *SearchIndex) Query(query string, limit int) []SearchResult {
 	scores := make([]float64, idx.DocCount)
 	for _, term := range queryTerms {
 		postings, ok := idx.InvertedIndex[term]
+		if !ok && FuzzyMaxDist > 0 {
+			// Fuzzy fallback: find similar terms within edit distance.
+			fuzzyTerms := fuzzyLookup(term, idx.InvertedIndex, FuzzyMaxDist)
+			for _, ft := range fuzzyTerms {
+				fp := idx.InvertedIndex[ft]
+				// Discount fuzzy matches by 50% to prefer exact matches.
+				idf := calcIDF(idx.DocCount, len(fp)) * 0.5
+				for _, p := range fp {
+					dl := float64(idx.Documents[p.DocIdx].DocLen)
+					tf := float64(p.Freq)
+					num := tf * (K1 + 1)
+					denom := tf + K1*(1-B+B*dl/idx.AvgDocLen)
+					scores[p.DocIdx] += idf * num / denom
+				}
+			}
+			continue
+		}
 		if !ok {
 			continue
 		}
@@ -168,13 +202,15 @@ func (idx *SearchIndex) Query(query string, limit int) []SearchResult {
 			continue
 		}
 		doc := idx.Documents[i]
+		snippet := ExtractSnippet(doc.Summary, query, defaultSnippetLen)
 		results = append(results, SearchResult{
-			Path:   doc.Path,
-			Title:  doc.Title,
-			Type:   doc.Type,
-			Status: doc.Status,
-			Score:  math.Round(score*1000) / 1000, // 3 decimal places
-			Tags:   doc.Tags,
+			Path:    doc.Path,
+			Title:   doc.Title,
+			Type:    doc.Type,
+			Status:  doc.Status,
+			Score:   math.Round(score*1000) / 1000,
+			Tags:    doc.Tags,
+			Snippet: snippet,
 		})
 	}
 
