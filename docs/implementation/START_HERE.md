@@ -14,8 +14,8 @@ Follow these steps exactly before implementing features.
 ## 2. Preflight Commands
 
 ```bash
-task ai:tools:check
-task ai:check
+athena doctor
+athena check
 ```
 
 ## 3. Execution Model

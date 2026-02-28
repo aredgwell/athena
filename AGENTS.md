@@ -35,8 +35,8 @@ Examples:
 - Lint/format/static analysis
 - Docs integrity checks
 - IaC checks (Terraform/Ansible/Nix, etc.)
-- AI tooling awareness (`task ai:tools:check`)
-- AI memory hygiene (`task ai:check`)
+- AI tooling awareness (`athena doctor`)
+- AI memory hygiene (`athena check`)
 
 ## 4. Constraints
 
@@ -55,6 +55,6 @@ Examples:
 
 ## 6. Agent Tooling Awareness
 
-- Run `task ai:tools:check` when session tooling availability is unknown.
+- Run `athena doctor` when session tooling availability is unknown.
 - Prefer structured CLI tools (`rg`, `jq`, `yq`, `htmlq`, `difft`) over ad-hoc parsing.
 - Use fallbacks only when preferred tools are unavailable.

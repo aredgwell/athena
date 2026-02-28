@@ -40,7 +40,7 @@ repository structure. Examples:
 | `docs` | Documentation |
 | `ci` | CI/CD pipelines and workflows |
 | `scripts` | Helper scripts |
-| `meta` | Repository-level config (AGENTS.md, Taskfile, .editorconfig, etc.) |
+| `meta` | Repository-level config (AGENTS.md, .editorconfig, etc.) |
 
 ### Examples
 

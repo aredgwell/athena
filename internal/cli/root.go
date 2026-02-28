@@ -34,6 +34,7 @@ func init() {
 	rootCmd.PersistentFlags().String("format", "text", "Output format: text or json")
 	rootCmd.PersistentFlags().String("policy", "standard", "Policy level: strict, standard, or lenient")
 	rootCmd.PersistentFlags().Duration("lock-timeout", 0, "Maximum wait for mutation lock acquisition")
+	rootCmd.PersistentFlags().String("actor", "", "Client identity for telemetry (e.g. cursor, claude-code)")
 
 	rootCmd.AddCommand(versionCmd)
 }

@@ -27,6 +27,7 @@ type Record struct {
 	ErrorCode       *string           `json:"error_code"`
 	PolicyLevel     string            `json:"policy_level,omitempty"`
 	IsDryRun        bool              `json:"is_dry_run"`
+	Actor           string            `json:"actor,omitempty"`
 	Context         map[string]string `json:"context,omitempty"`
 }
 

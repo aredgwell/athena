@@ -7,7 +7,7 @@ Preferred local binaries for agent workflows.
 Run:
 
 ```bash
-task ai:tools:check
+athena doctor
 ```
 
 ## Preferred Tools
@@ -17,13 +17,11 @@ task ai:tools:check
 - YAML: `yq`
 - HTML: `htmlq`
 - Diffs: `difft`
-- Task runner: `task`
 
 ## Optional Accelerators
 
 - Context packaging: `repomix`
 - Interactive selection: `fzf`
-- Shell quality: `shfmt`, `shellcheck`
 
 ## Rule
 
