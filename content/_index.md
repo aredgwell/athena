@@ -5,24 +5,29 @@ type: docs
 
 # Athena CLI
 
-A portable, schema-driven scaffolder and lifecycle manager for AI-native repository workflows.
+AI agents lose context between sessions. Athena gives them structured, persistent working memory inside your repository — a `.ai/` directory of Markdown notes with YAML frontmatter, lifecycle management, BM25 search, and governance gates.
 
 {{< button relref="/docs/guides/integration-guide" >}}Integration Guide{{< /button >}}
+{{< button relref="/docs/guides/mcp-setup" >}}MCP Setup{{< /button >}}
 {{< button relref="/docs/specification" >}}Specification{{< /button >}}
 
 ## Quick Start
 
 ```sh
 # Install
-go install github.com/amr-athena/athena@latest
+brew install amr-athena/tap/athena
 
 # Bootstrap a repository
 athena init --preset standard
 
 # Verify
 athena doctor
-athena tools
+athena check
 ```
+
+## MCP Server
+
+Connect your IDE agent directly to Athena via [Model Context Protocol](https://modelcontextprotocol.io/). See the [MCP Setup Guide]({{< relref "/docs/guides/mcp-setup" >}}) for configuration.
 
 ## Documentation
 

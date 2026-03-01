@@ -63,5 +63,6 @@ athena completion fish > ~/.config/fish/completions/athena.fish
 
 ## Next steps
 
+- [MCP Setup]({{< relref "mcp-setup" >}}) — connect your IDE agent to Athena
 - [Integration Guide]({{< relref "integration-guide" >}}) — set up Athena in your repository
 - [Agent Preflight]({{< relref "agent-preflight" >}}) — configure AI agent workflows
