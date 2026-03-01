@@ -29,7 +29,7 @@ brews:
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     directory: Formula
-    homepage: https://amr-athena.github.io/athena/
+    homepage: https://aredgwell.github.io/athena/
     description: "AI-native repository lifecycle manager"
     license: MIT
     install: |
