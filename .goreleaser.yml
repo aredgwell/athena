@@ -23,19 +23,21 @@ archives:
   - format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
-brews:
-  - repository:
-      owner: amr-athena
-      name: homebrew-tap
-      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
-    directory: Formula
-    homepage: https://aredgwell.github.io/athena/
-    description: "AI-native repository lifecycle manager"
-    license: MIT
-    install: |
-      bin.install "athena"
-    test: |
-      system "#{bin}/athena", "version"
+# Homebrew tap: uncomment when amr-athena/homebrew-tap exists and
+# HOMEBREW_TAP_TOKEN secret is configured in the repository.
+# brews:
+#   - repository:
+#       owner: amr-athena
+#       name: homebrew-tap
+#       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+#     directory: Formula
+#     homepage: https://aredgwell.github.io/athena/
+#     description: "Structured AI working memory for repositories"
+#     license: MIT
+#     install: |
+#       bin.install "athena"
+#     test: |
+#       system "#{bin}/athena", "version"
 
 checksum:
   name_template: checksums.txt
