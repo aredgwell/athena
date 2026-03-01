@@ -9,11 +9,8 @@ How to use Athena to maximise AI-agent effectiveness in a source code repository
 ### Install the binary
 
 ```sh
-# From source
-go install github.com/amr-athena/athena@latest
-
-# Or via Homebrew
-brew install amr-athena/tap/athena
+# From source (Go 1.25+)
+go install github.com/amr-athena/athena/cmd/athena@latest
 ```
 
 ### Bootstrap a repository

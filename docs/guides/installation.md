@@ -5,24 +5,7 @@ weight: 1
 
 # Installation
 
-## Homebrew (macOS / Linux)
-
-```bash
-brew install amr-athena/tap/athena
-```
-
-## Download a release
-
-Pre-built binaries for macOS and Linux (amd64 / arm64) are available on the
-[GitHub Releases](https://github.com/amr-athena/athena/releases) page.
-
-```bash
-# Example: macOS arm64
-curl -sL https://github.com/amr-athena/athena/releases/latest/download/athena_$(uname -s)_$(uname -m).tar.gz | tar xz
-sudo mv athena /usr/local/bin/
-```
-
-## Build from source
+## From source (recommended)
 
 Requires Go 1.25+:
 
@@ -33,9 +16,20 @@ go install github.com/amr-athena/athena/cmd/athena@latest
 Or clone and build:
 
 ```bash
-git clone https://github.com/amr-athena/athena.git
+git clone https://github.com/aredgwell/athena.git
 cd athena
 go build -o athena ./cmd/athena
+sudo mv athena /usr/local/bin/
+```
+
+## Download a release
+
+Pre-built binaries for macOS and Linux (amd64 / arm64) are available on the
+[GitHub Releases](https://github.com/aredgwell/athena/releases) page.
+
+```bash
+# Example: macOS arm64
+curl -sL https://github.com/aredgwell/athena/releases/latest/download/athena_0.1.0_darwin_arm64.tar.gz | tar xz
 sudo mv athena /usr/local/bin/
 ```
 

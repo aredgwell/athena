@@ -7,12 +7,11 @@ Athena manages a `.ai/` directory of Markdown notes with YAML frontmatter — cr
 ## Install
 
 ```bash
-# Homebrew
-brew install amr-athena/tap/athena
-
-# Or from source (Go 1.25+)
+# From source (Go 1.25+)
 go install github.com/amr-athena/athena/cmd/athena@latest
 ```
+
+Pre-built binaries are also available on the [Releases](https://github.com/aredgwell/athena/releases) page.
 
 ## Quick Start
 
@@ -52,7 +51,7 @@ See the [MCP Setup Guide](docs/guides/mcp-setup.md) for Windsurf and other clien
 
 ## Documentation
 
-- [Full docs](https://amr-athena.github.io/athena/) — specification, guides, and reference
+- [Full docs](https://aredgwell.github.io/athena/) — specification, guides, and reference
 - [MCP Setup](docs/guides/mcp-setup.md) — configure IDE agent integration
 - [Integration Guide](docs/guides/integration-guide.md) — full workflow reference
 - [ATHENA.md](ATHENA.md) — product specification
