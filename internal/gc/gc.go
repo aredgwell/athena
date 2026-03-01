@@ -4,7 +4,7 @@ package gc
 import (
 	"time"
 
-	"github.com/amr-athena/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/notes"
 )
 
 // Result records the outcome of a GC run.

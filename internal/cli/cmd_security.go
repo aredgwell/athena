@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/amr-athena/athena/internal/security"
+	"github.com/aredgwell/athena/internal/security"
 	"github.com/spf13/cobra"
 )
 

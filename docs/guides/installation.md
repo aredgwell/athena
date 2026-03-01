@@ -10,7 +10,7 @@ weight: 1
 Requires Go 1.25+:
 
 ```bash
-go install github.com/amr-athena/athena/cmd/athena@latest
+go install github.com/aredgwell/athena/cmd/athena@latest
 ```
 
 Or clone and build:

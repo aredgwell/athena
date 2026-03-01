@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	atherr "github.com/amr-athena/athena/internal/errors"
+	atherr "github.com/aredgwell/athena/internal/errors"
 )
 
 // Envelope is the common JSON output wrapper for all Athena commands.

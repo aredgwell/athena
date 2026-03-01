@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amr-athena/athena/internal/commitlint"
+	"github.com/aredgwell/athena/internal/commitlint"
 )
 
 // Entry is a single changelog item.

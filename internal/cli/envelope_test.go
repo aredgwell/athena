@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	atherr "github.com/amr-athena/athena/internal/errors"
+	atherr "github.com/aredgwell/athena/internal/errors"
 )
 
 func TestJSONEnvelope(t *testing.T) {

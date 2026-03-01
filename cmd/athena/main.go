@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/amr-athena/athena/internal/cli"
+	"github.com/aredgwell/athena/internal/cli"
 )
 
 func main() {

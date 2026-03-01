@@ -8,17 +8,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/amr-athena/athena/internal/config"
-	"github.com/amr-athena/athena/internal/execution"
-	"github.com/amr-athena/athena/internal/gc"
-	"github.com/amr-athena/athena/internal/index"
-	"github.com/amr-athena/athena/internal/notes"
-	"github.com/amr-athena/athena/internal/policy"
-	"github.com/amr-athena/athena/internal/release"
-	"github.com/amr-athena/athena/internal/report"
-	"github.com/amr-athena/athena/internal/scaffold"
-	"github.com/amr-athena/athena/internal/telemetry"
-	"github.com/amr-athena/athena/internal/validate"
+	"github.com/aredgwell/athena/internal/config"
+	"github.com/aredgwell/athena/internal/execution"
+	"github.com/aredgwell/athena/internal/gc"
+	"github.com/aredgwell/athena/internal/index"
+	"github.com/aredgwell/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/policy"
+	"github.com/aredgwell/athena/internal/release"
+	"github.com/aredgwell/athena/internal/report"
+	"github.com/aredgwell/athena/internal/scaffold"
+	"github.com/aredgwell/athena/internal/telemetry"
+	"github.com/aredgwell/athena/internal/validate"
 )
 
 func TestIntegrationScaffoldCheckIndex(t *testing.T) {

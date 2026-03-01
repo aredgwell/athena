@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/amr-athena/athena/internal/config"
-	athenaerr "github.com/amr-athena/athena/internal/errors"
+	"github.com/aredgwell/athena/internal/config"
+	athenaerr "github.com/aredgwell/athena/internal/errors"
 )
 
 // CommandRunner abstracts external command execution for testability.

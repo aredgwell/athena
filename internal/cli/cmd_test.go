@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/amr-athena/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/notes"
 )
 
 // setupTestRepo creates a temp directory with athena.toml, .athena/, and .ai/ structure,

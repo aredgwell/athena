@@ -1,7 +1,7 @@
 package cli
 
 import (
-	mcppkg "github.com/amr-athena/athena/internal/mcp"
+	mcppkg "github.com/aredgwell/athena/internal/mcp"
 	"github.com/spf13/cobra"
 )
 

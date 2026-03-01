@@ -2,7 +2,7 @@
 package report
 
 import (
-	"github.com/amr-athena/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/notes"
 )
 
 // Metrics holds computed memory effectiveness metrics.

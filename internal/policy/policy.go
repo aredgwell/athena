@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/amr-athena/athena/internal/config"
+	"github.com/aredgwell/athena/internal/config"
 )
 
 // CheckFunc is a function that runs a single gate check.

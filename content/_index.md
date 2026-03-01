@@ -15,7 +15,7 @@ AI agents lose context between sessions. Athena gives them structured, persisten
 
 ```sh
 # Install (Go 1.25+)
-go install github.com/amr-athena/athena/cmd/athena@latest
+go install github.com/aredgwell/athena/cmd/athena@latest
 
 # Bootstrap a repository
 athena init --preset standard

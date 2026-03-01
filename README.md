@@ -8,7 +8,7 @@ Athena manages a `.ai/` directory of Markdown notes with YAML frontmatter — cr
 
 ```bash
 # From source (Go 1.25+)
-go install github.com/amr-athena/athena/cmd/athena@latest
+go install github.com/aredgwell/athena/cmd/athena@latest
 ```
 
 Pre-built binaries are also available on the [Releases](https://github.com/aredgwell/athena/releases) page.

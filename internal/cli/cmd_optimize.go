@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/amr-athena/athena/internal/optimize"
-	"github.com/amr-athena/athena/internal/telemetry"
+	"github.com/aredgwell/athena/internal/optimize"
+	"github.com/aredgwell/athena/internal/telemetry"
 	"github.com/spf13/cobra"
 )
 

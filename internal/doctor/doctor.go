@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/amr-athena/athena/internal/config"
+	"github.com/aredgwell/athena/internal/config"
 )
 
 // CommandRunner abstracts external command execution for testability.

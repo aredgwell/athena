@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/amr-athena/athena/internal/config"
+	"github.com/aredgwell/athena/internal/config"
 )
 
 // InstallOptions controls hook installation behavior.

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/amr-athena/athena/internal/config"
+	"github.com/aredgwell/athena/internal/config"
 )
 
 func passCheck() CheckFunc {

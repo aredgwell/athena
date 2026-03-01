@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/amr-athena/athena/internal/notes"
-	"github.com/amr-athena/athena/internal/search"
+	"github.com/aredgwell/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/search"
 	"gopkg.in/yaml.v3"
 )
 

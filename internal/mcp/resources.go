@@ -7,11 +7,11 @@ import (
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/amr-athena/athena/internal/capabilities"
-	"github.com/amr-athena/athena/internal/config"
-	"github.com/amr-athena/athena/internal/index"
-	"github.com/amr-athena/athena/internal/notes"
-	"github.com/amr-athena/athena/internal/report"
+	"github.com/aredgwell/athena/internal/capabilities"
+	"github.com/aredgwell/athena/internal/config"
+	"github.com/aredgwell/athena/internal/index"
+	"github.com/aredgwell/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/report"
 )
 
 func registerResources(srv *sdkmcp.Server, baseDir string) {

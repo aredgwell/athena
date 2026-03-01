@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/amr-athena/athena/internal/config"
-	"github.com/amr-athena/athena/internal/telemetry"
+	"github.com/aredgwell/athena/internal/config"
+	"github.com/aredgwell/athena/internal/telemetry"
 )
 
 // Proposal is a single optimization recommendation.

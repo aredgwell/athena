@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amr-athena/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/notes"
 )
 
 // ValidationResult holds the outcome of validating a single note.

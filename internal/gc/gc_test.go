@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/amr-athena/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/notes"
 )
 
 func TestGCCommand(t *testing.T) {

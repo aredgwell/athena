@@ -7,14 +7,14 @@ import (
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/amr-athena/athena/internal/config"
-	"github.com/amr-athena/athena/internal/doctor"
-	"github.com/amr-athena/athena/internal/gc"
-	"github.com/amr-athena/athena/internal/index"
-	"github.com/amr-athena/athena/internal/notes"
-	"github.com/amr-athena/athena/internal/report"
-	"github.com/amr-athena/athena/internal/search"
-	"github.com/amr-athena/athena/internal/validate"
+	"github.com/aredgwell/athena/internal/config"
+	"github.com/aredgwell/athena/internal/doctor"
+	"github.com/aredgwell/athena/internal/gc"
+	"github.com/aredgwell/athena/internal/index"
+	"github.com/aredgwell/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/report"
+	"github.com/aredgwell/athena/internal/search"
+	"github.com/aredgwell/athena/internal/validate"
 )
 
 // Tool argument structs. The jsonschema tag provides descriptions

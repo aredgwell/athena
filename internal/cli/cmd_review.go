@@ -5,9 +5,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/amr-athena/athena/internal/gc"
-	"github.com/amr-athena/athena/internal/notes"
-	"github.com/amr-athena/athena/internal/validate"
+	"github.com/aredgwell/athena/internal/gc"
+	"github.com/aredgwell/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/validate"
 	"github.com/spf13/cobra"
 )
 

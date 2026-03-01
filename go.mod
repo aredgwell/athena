@@ -1,4 +1,4 @@
-module github.com/amr-athena/athena
+module github.com/aredgwell/athena
 
 go 1.25.0
 

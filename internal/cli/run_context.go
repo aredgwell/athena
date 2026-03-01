@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amr-athena/athena/internal/config"
-	atherr "github.com/amr-athena/athena/internal/errors"
-	"github.com/amr-athena/athena/internal/lock"
+	"github.com/aredgwell/athena/internal/config"
+	atherr "github.com/aredgwell/athena/internal/errors"
+	"github.com/aredgwell/athena/internal/lock"
 	"github.com/spf13/cobra"
 )
 

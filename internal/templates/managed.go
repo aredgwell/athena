@@ -3,8 +3,8 @@ package templates
 import (
 	"fmt"
 
-	"github.com/amr-athena/athena/internal/config"
-	"github.com/amr-athena/athena/internal/scaffold"
+	"github.com/aredgwell/athena/internal/config"
+	"github.com/aredgwell/athena/internal/scaffold"
 )
 
 // ManagedFiles returns the set of files to scaffold based on config feature flags.

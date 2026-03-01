@@ -9,9 +9,9 @@ import (
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/amr-athena/athena/internal/index"
-	"github.com/amr-athena/athena/internal/notes"
-	"github.com/amr-athena/athena/internal/search"
+	"github.com/aredgwell/athena/internal/index"
+	"github.com/aredgwell/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/search"
 )
 
 // setupTestDir creates a minimal repo structure for MCP handler tests.

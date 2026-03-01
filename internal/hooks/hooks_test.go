@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/amr-athena/athena/internal/config"
+	"github.com/aredgwell/athena/internal/config"
 )
 
 func TestHooksInstallCommand(t *testing.T) {

@@ -10,7 +10,7 @@ How to use Athena to maximise AI-agent effectiveness in a source code repository
 
 ```sh
 # From source (Go 1.25+)
-go install github.com/amr-athena/athena/cmd/athena@latest
+go install github.com/aredgwell/athena/cmd/athena@latest
 ```
 
 ### Bootstrap a repository
@@ -600,7 +600,7 @@ jobs:
           go-version: "1.25"
 
       - name: Install Athena
-        run: go install github.com/amr-athena/athena@latest
+        run: go install github.com/aredgwell/athena@latest
 
       - name: Validate notes and schema
         run: athena check --strict-schema --format json

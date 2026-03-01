@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/amr-athena/athena/internal/capabilities"
+	"github.com/aredgwell/athena/internal/capabilities"
 )
 
 func TestCapabilitiesGolden(t *testing.T) {

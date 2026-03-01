@@ -16,6 +16,7 @@ packed-context.xml
 
 # Build artifacts
 bin/
+athena
 .task/
 
 # Hugo build output

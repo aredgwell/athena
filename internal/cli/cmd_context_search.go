@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/amr-athena/athena/internal/search"
+	"github.com/aredgwell/athena/internal/search"
 	"github.com/spf13/cobra"
 )
 
