@@ -7,7 +7,7 @@ agent onboarding, and policy gates for CI integration.
 
 ## Agent Constraints
 
-- Go 1.23+ standard library except for dependencies listed in this spec.
+- Go 1.25+ standard library except for dependencies listed in this spec.
 - Do not modify `go.mod` or `go.sum` without explicit permission.
 - 100% test coverage for YAML frontmatter parsing and schema migration logic.
 - Do not create packages outside `cmd/athena` and `internal/`.
@@ -37,6 +37,11 @@ athena note list  [--status STATUS] [--type TYPE]
 athena context query [--component COMPONENT] [--type TYPE] [--status STATUS] [--format json|text]
 athena context timeline --component COMPONENT [--format json|text]
 athena context search "QUERY" [--limit N]
+athena context pack [--profile PROFILE] [--changed] [--stdout] [--output PATH] [--dry-run]
+athena context budget [--profile PROFILE] [--max-tokens N]
+athena context mcp [--stdio]
+athena tools [--strict]
+athena review weekly [--days N]
 
 # Governance — policy and commit hygiene
 athena policy gate [--pr REF]
@@ -48,6 +53,9 @@ athena changelog [--since TAG] [--next VERSION] [--dry-run]
 athena release propose [--since TAG] [--next VERSION]
 athena release approve --proposal-id ID
 athena hooks install [--pre-commit]
+athena plan <command> [flags]
+athena apply --plan-id ID
+athena rollback --tx TX_ID [--to-step N]
 
 # Diagnostics — telemetry-derived insights
 athena report
@@ -95,6 +103,11 @@ the working memory.
 | `context query`    | Filtered note retrieval by component, type, status             |
 | `context timeline` | Chronological view of notes for a component                    |
 | `context search`   | BM25 search with Porter stemming, fuzzy matching, and snippets |
+| `context pack`     | Generate token-optimised context bundle via repomix            |
+| `context budget`   | Estimate token count and check against a budget threshold      |
+| `context mcp`      | Start repomix in MCP mode for tool-use integration             |
+| `tools`            | Check availability of required and recommended tools           |
+| `review weekly`    | Combined GC, validation, and promotion candidate review        |
 
 ### Governance Commands
 
@@ -116,6 +129,9 @@ Compose core and governance commands into release workflows.
 | `release propose` | Generate release proposal with approval gates   |
 | `release approve` | Execute a release proposal after gate check     |
 | `hooks install`   | Install/update local pre-commit hooks           |
+| `plan`            | Compute a mutation plan without executing        |
+| `apply`           | Execute a previously computed plan               |
+| `rollback`        | Reverse a completed transaction                  |
 
 ### Diagnostic Commands
 
@@ -139,9 +155,11 @@ overhead for IDE agents (Claude Code, Cursor, Windsurf).
 **Tools** (callable actions):
 `note_new`, `note_close`, `note_promote`, `note_read`, `note_list`,
 `check`, `check_fix`, `index_rebuild`, `gc_scan`, `doctor`, `report`,
-`context_search`
+`context_search`, `policy_gate`, `commit_lint`, `security_scan`,
+`context_pack`, `context_budget`
 
-Transport: stdio only. Semantics are identical to CLI invocation.
+Transport: stdio only. See the [MCP Setup Guide](docs/guides/mcp-setup.md)
+for per-tool details and IDE configuration.
 
 ## Manifest Schema
 
@@ -480,8 +498,8 @@ Every non-zero JSON response includes at least one `error_code` with an
 
 ## Implementation
 
-- **Language**: Go 1.24+
-- **CLI**: `cobra` + `viper`
+- **Language**: Go 1.25+
+- **CLI**: `cobra`
 - **Template embedding**: `go:embed`
 - **YAML**: `gopkg.in/yaml.v3`
 - **TOML**: `github.com/BurntSushi/toml`
@@ -505,7 +523,7 @@ internal/
   report/        # effectiveness metrics
   capabilities/  # capability negotiation
   policy/        # policy gate evaluation
-  context/       # note query/timeline
+  context/       # note query/timeline, repomix pack/budget
   security/      # gitleaks/actionlint wrappers
   doctor/        # repository diagnostics
   release/       # release proposal and approval
