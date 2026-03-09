@@ -7,6 +7,13 @@ Versioning.
 
 ## [Unreleased]
 
-### Added
+## [0.3.2] - 2026-03-10
 
-- Initial Athena CLI product specification and implementation roadmap.
+### Fixed
+
+- Context pack dry-run no longer fails when repomix is not installed.
+- Formatting issues in MCP tools source.
+
+### Changed
+
+- CI verification is now part of the Definition of Done in AGENTS.md and CONTRIBUTING.md.
