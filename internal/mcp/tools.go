@@ -9,6 +9,7 @@ import (
 
 	"github.com/aredgwell/athena/internal/commitlint"
 	"github.com/aredgwell/athena/internal/config"
+	athenacontext "github.com/aredgwell/athena/internal/context"
 	"github.com/aredgwell/athena/internal/doctor"
 	"github.com/aredgwell/athena/internal/gc"
 	"github.com/aredgwell/athena/internal/index"
@@ -72,6 +73,17 @@ type commitLintArgs struct {
 type securityScanArgs struct {
 	Secrets   bool `json:"secrets,omitempty"   jsonschema:"Run secret detection (default: from config)"`
 	Workflows bool `json:"workflows,omitempty" jsonschema:"Run workflow lint (default: from config)"`
+}
+
+type contextPackArgs struct {
+	Profile string `json:"profile,omitempty" jsonschema:"Context profile name (default: from config)"`
+	Changed bool   `json:"changed,omitempty" jsonschema:"Only include changed files"`
+	DryRun  bool   `json:"dry_run,omitempty" jsonschema:"Return resolved args without executing"`
+}
+
+type contextBudgetArgs struct {
+	Profile   string `json:"profile,omitempty"    jsonschema:"Context profile name (default: from config)"`
+	MaxTokens int    `json:"max_tokens,omitempty" jsonschema:"Token budget threshold to check against"`
 }
 
 func boolPtr(b bool) *bool { return &b }
@@ -205,6 +217,26 @@ func registerTools(srv *sdkmcp.Server, baseDir string) {
 			OpenWorldHint:   boolPtr(true),
 		},
 	}, securityScanHandler(baseDir))
+
+	sdkmcp.AddTool(srv, &sdkmcp.Tool{
+		Name:        "context_pack",
+		Description: "Generate a context bundle using a configured repomix profile",
+		Annotations: &sdkmcp.ToolAnnotations{
+			ReadOnlyHint:    true,
+			DestructiveHint: boolPtr(false),
+			OpenWorldHint:   boolPtr(true),
+		},
+	}, contextPackHandler(baseDir))
+
+	sdkmcp.AddTool(srv, &sdkmcp.Tool{
+		Name:        "context_budget",
+		Description: "Estimate token count for context and check against a budget threshold",
+		Annotations: &sdkmcp.ToolAnnotations{
+			ReadOnlyHint:    true,
+			DestructiveHint: boolPtr(false),
+			OpenWorldHint:   boolPtr(true),
+		},
+	}, contextBudgetHandler(baseDir))
 }
 
 // jsonResult marshals v to indented JSON and wraps it in a CallToolResult.
@@ -539,6 +571,55 @@ func securityScanHandler(baseDir string) sdkmcp.ToolHandlerFor[securityScanArgs,
 		})
 		if err != nil {
 			return nil, nil, err
+		}
+
+		r, err := jsonResult(result)
+		return r, nil, err
+	}
+}
+
+func contextPackHandler(baseDir string) sdkmcp.ToolHandlerFor[contextPackArgs, any] {
+	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args contextPackArgs) (*sdkmcp.CallToolResult, any, error) {
+		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
+		if err != nil {
+			r, _ := errResult("failed to load config: " + err.Error())
+			return r, nil, nil
+		}
+
+		svc := athenacontext.NewService(cfg.Context, athenacontext.ExecRunner{})
+		result, err := svc.Pack(athenacontext.PackOptions{
+			Profile:     args.Profile,
+			Changed:     args.Changed,
+			DryRun:      args.DryRun,
+			PolicyLevel: cfg.Policy.Default,
+		})
+		if err != nil {
+			r, _ := errResult(err.Error())
+			return r, nil, nil
+		}
+
+		r, err := jsonResult(result)
+		return r, nil, err
+	}
+}
+
+func contextBudgetHandler(baseDir string) sdkmcp.ToolHandlerFor[contextBudgetArgs, any] {
+	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args contextBudgetArgs) (*sdkmcp.CallToolResult, any, error) {
+		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
+		if err != nil {
+			r, _ := errResult("failed to load config: " + err.Error())
+			return r, nil, nil
+		}
+
+		svc := athenacontext.NewService(cfg.Context, athenacontext.ExecRunner{})
+		result, err := svc.Budget(athenacontext.BudgetOptions{
+			Profile:     args.Profile,
+			MaxTokens:   args.MaxTokens,
+			PolicyLevel: cfg.Policy.Default,
+		})
+		if err != nil {
+			r, _ := errResult(err.Error())
+			return r, nil, nil
 		}
 
 		r, err := jsonResult(result)

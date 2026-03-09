@@ -491,6 +491,68 @@ func TestSecurityScanTool(t *testing.T) {
 	}
 }
 
+// --- Context pack and budget tool tests ---
+
+func TestContextPackToolDryRun(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := contextPackHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, contextPackArgs{
+		Profile: "review",
+		DryRun:  true,
+	})
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	if result.IsError {
+		t.Fatal("unexpected error result")
+	}
+
+	text := result.Content[0].(*sdkmcp.TextContent).Text
+	if !strings.Contains(text, "review") {
+		t.Errorf("expected profile in result, got %s", text)
+	}
+	if !strings.Contains(text, `"dry_run": true`) {
+		t.Errorf("expected dry_run flag in result, got %s", text)
+	}
+}
+
+func TestContextPackToolInvalidProfile(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := contextPackHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, contextPackArgs{
+		Profile: "nonexistent",
+		DryRun:  true,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !result.IsError {
+		t.Error("expected error for invalid profile")
+	}
+}
+
+func TestContextBudgetToolMissingRepomix(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := contextBudgetHandler(dir)
+
+	// repomix is unlikely to be installed in test env — expect graceful error
+	result, _, err := handler(context.Background(), nil, contextBudgetArgs{
+		MaxTokens: 10000,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !result.IsError {
+		// If repomix happens to be installed, the result should still be valid
+		text := result.Content[0].(*sdkmcp.TextContent).Text
+		if !strings.Contains(text, "estimated_tokens") {
+			t.Errorf("expected budget result, got %s", text)
+		}
+	}
+}
+
 // --- Server registration test ---
 
 func TestServerRegistration(t *testing.T) {
@@ -518,6 +580,7 @@ func TestServerRegistration(t *testing.T) {
 		"note_list", "check", "check_fix", "index_rebuild",
 		"gc_scan", "doctor", "report", "context_search",
 		"policy_gate", "commit_lint", "security_scan",
+		"context_pack", "context_budget",
 	}
 
 	toolNames := make(map[string]bool)
