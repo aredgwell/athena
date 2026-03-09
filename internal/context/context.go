@@ -102,10 +102,6 @@ func (s *Service) CheckAvailability() error {
 
 // Pack executes context pack with the resolved profile and options.
 func (s *Service) Pack(opts PackOptions) (*PackResult, error) {
-	if err := s.CheckAvailability(); err != nil {
-		return nil, err
-	}
-
 	profile := opts.Profile
 	if profile == "" {
 		profile = s.cfg.DefaultProfile
@@ -135,6 +131,11 @@ func (s *Service) Pack(opts PackOptions) (*PackResult, error) {
 
 	if opts.DryRun {
 		return result, nil
+	}
+
+	// Only check tool availability when we actually need to run it.
+	if err := s.CheckAvailability(); err != nil {
+		return nil, err
 	}
 
 	output, err := s.runner.Run(s.cfg.Provider, args...)

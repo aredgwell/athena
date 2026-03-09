@@ -76,7 +76,22 @@ docs/contributing-guidelines
 
 ## What Must Pass Before Merge
 
-Run the validation checks that match the areas you touched. All must pass.
+Run the validation checks that match the areas you touched. All must pass:
+
+```bash
+gofmt -l .                                    # formatting
+go vet ./...                                  # static analysis
+go test -race -count=1 $(go list ./... | grep -v /e2e)  # unit tests
+```
+
+After pushing, **wait for CI to pass** before considering work complete. CI runs
+lint and tests on both ubuntu and macOS. Check status with:
+
+```bash
+gh run list --limit 1
+gh run view <run-id>
+```
+
 Refer to the **Validation Matrix** in `AGENTS.md` for the definitive list of
 check commands per stack.
 
@@ -119,12 +134,14 @@ they affect user-facing behaviour.
 ## Release Process
 
 1. Review the `[Unreleased]` section in `CHANGELOG.md`.
-2. Choose a version number following [Semantic Versioning](https://semver.org/):
+2. **Ensure CI is green on main** before starting a release.
+3. Choose a version number following [Semantic Versioning](https://semver.org/):
    - **Major** (`X.0.0`): breaking changes to public contracts
    - **Minor** (`0.X.0`): new capabilities or features
    - **Patch** (`0.0.X`): fixes, documentation corrections
-3. Replace `[Unreleased]` with `[X.Y.Z] - YYYY-MM-DD` and add a fresh
+4. Replace `[Unreleased]` with `[X.Y.Z] - YYYY-MM-DD` and add a fresh
    `[Unreleased]` heading above it.
-4. Commit: `chore(meta): release vX.Y.Z`.
-5. Tag: `git tag vX.Y.Z`.
-6. Push: `git push && git push --tags`.
+5. Commit: `chore(meta): release vX.Y.Z`.
+6. Tag: `git tag vX.Y.Z`.
+7. Push: `git push && git push --tags`.
+8. **Verify CI passes** on the release commit before announcing.

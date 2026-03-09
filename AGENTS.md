@@ -49,9 +49,14 @@ Examples:
 
 - [ ] Code is idempotent where applicable.
 - [ ] Ownership boundaries were respected.
-- [ ] Required validation commands were run.
+- [ ] Required validation commands were run locally (`go test ./...`, `gofmt`).
+- [ ] Changes pushed/PRed and **CI checks pass** (lint + tests on ubuntu and macOS).
 - [ ] Documentation reflects the new declared state.
 - [ ] Any manual Day 2 steps are clearly noted.
+
+**A task is not complete until CI is green.** After pushing, check the workflow run
+(`gh run list --limit 1` or the GitHub Actions tab). If CI fails, diagnose and fix
+before moving on.
 
 ## 6. Agent Tooling Awareness
 

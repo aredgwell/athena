@@ -273,7 +273,6 @@ func loadConfig(baseDir string) (config.Config, *sdkmcp.CallToolResult) {
 	return cfg, nil
 }
 
-
 func noteNewHandler(baseDir string) sdkmcp.ToolHandlerFor[noteNewArgs, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args noteNewArgs) (*sdkmcp.CallToolResult, any, error) {
 		if args.Type == "" || args.Slug == "" || args.Title == "" {
