@@ -85,6 +85,8 @@ Any MCP-compatible client that supports stdio transport can connect:
 
 ### Tools
 
+#### Notes & memory
+
 | Tool | Description | Mutates? |
 |------|-------------|----------|
 | `note_new` | Create a note from template | Yes |
@@ -92,13 +94,33 @@ Any MCP-compatible client that supports stdio transport can connect:
 | `note_promote` | Promote note to canonical docs | Yes |
 | `note_read` | Read a note's full content | No |
 | `note_list` | List notes with status/type filters | No |
+| `context_search` | BM25 full-text search over notes | No |
+
+#### Validation & diagnostics
+
+| Tool | Description | Mutates? |
+|------|-------------|----------|
 | `check` | Validate frontmatter and schema | No |
 | `check_fix` | Validate and auto-fix schema issues | Yes |
 | `index_rebuild` | Rebuild note index and search index | Yes |
-| `gc_scan` | Mark stale notes past inactivity threshold | Yes |
+| `gc_scan` | Identify stale notes past inactivity threshold | No |
 | `doctor` | Run repository diagnostics | No |
 | `report` | Compute effectiveness metrics | No |
-| `context_search` | BM25 full-text search over notes | No |
+
+#### Governance
+
+| Tool | Description | Mutates? |
+|------|-------------|----------|
+| `policy_gate` | Run policy gate checks with per-check pass/fail | No |
+| `commit_lint` | Validate a commit message against conventional commit rules | No |
+| `security_scan` | Run secret detection and workflow lint checks | No |
+
+#### Context management
+
+| Tool | Description | Mutates? |
+|------|-------------|----------|
+| `context_pack` | Generate a context bundle using a configured repomix profile | No |
+| `context_budget` | Estimate token count and check against a budget threshold | No |
 
 ## Verify it works
 

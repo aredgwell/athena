@@ -34,7 +34,7 @@ athena check                     # validate working memory
 
 ## MCP Server
 
-Athena includes a [Model Context Protocol](https://modelcontextprotocol.io/) server for IDE agents. Add to your `.claude/settings.json` (Claude Code) or `.cursor/mcp.json` (Cursor):
+Athena includes a [Model Context Protocol](https://modelcontextprotocol.io/) server with 17 tools across four categories: notes & memory, validation & diagnostics, governance (policy gates, commit linting, security scanning), and context management. Add to your `.claude/settings.json` (Claude Code) or `.cursor/mcp.json` (Cursor):
 
 ```json
 {
@@ -47,7 +47,7 @@ Athena includes a [Model Context Protocol](https://modelcontextprotocol.io/) ser
 }
 ```
 
-See the [MCP Setup Guide](docs/guides/mcp-setup.md) for Windsurf and other clients.
+See the [MCP Setup Guide](docs/guides/mcp-setup.md) for the full tool list, Windsurf config, and other clients.
 
 ## Documentation
 
