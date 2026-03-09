@@ -262,6 +262,18 @@ func errResult(msg string) (*sdkmcp.CallToolResult, error) {
 	}, nil
 }
 
+// loadConfig loads athena.toml from baseDir and returns a config or an MCP
+// error result suitable for returning directly from a handler.
+func loadConfig(baseDir string) (config.Config, *sdkmcp.CallToolResult) {
+	cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
+	if err != nil {
+		r, _ := errResult("failed to load config: " + err.Error())
+		return cfg, r
+	}
+	return cfg, nil
+}
+
+
 func noteNewHandler(baseDir string) sdkmcp.ToolHandlerFor[noteNewArgs, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args noteNewArgs) (*sdkmcp.CallToolResult, any, error) {
 		if args.Type == "" || args.Slug == "" || args.Title == "" {
@@ -416,8 +428,7 @@ func gcScanHandler(baseDir string) sdkmcp.ToolHandlerFor[gcScanArgs, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args gcScanArgs) (*sdkmcp.CallToolResult, any, error) {
 		days := args.Days
 		if days <= 0 {
-			cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
-			if err == nil && cfg.GC.Days > 0 {
+			if cfg, errR := loadConfig(baseDir); errR == nil && cfg.GC.Days > 0 {
 				days = cfg.GC.Days
 			}
 		}
@@ -437,7 +448,7 @@ func gcScanHandler(baseDir string) sdkmcp.ToolHandlerFor[gcScanArgs, any] {
 func doctorHandler(baseDir string) sdkmcp.ToolHandlerFor[struct{}, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, _ struct{}) (*sdkmcp.CallToolResult, any, error) {
 		athenaDir := filepath.Join(baseDir, ".athena")
-		cfg, _ := config.Load(filepath.Join(baseDir, "athena.toml"))
+		cfg, _ := loadConfig(baseDir)
 		opts := doctor.Options{
 			ManifestPath: filepath.Join(baseDir, "athena.toml"),
 			AthenaDir:    athenaDir,
@@ -494,24 +505,12 @@ func contextSearchHandler(baseDir string) sdkmcp.ToolHandlerFor[contextSearchArg
 
 func policyGateHandler(baseDir string) sdkmcp.ToolHandlerFor[policyGateArgs, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args policyGateArgs) (*sdkmcp.CallToolResult, any, error) {
-		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
-		if err != nil {
-			r, _ := errResult("failed to load config: " + err.Error())
-			return r, nil, nil
+		cfg, errR := loadConfig(baseDir)
+		if errR != nil {
+			return errR, nil, nil
 		}
 
-		// Build check functions — each check returns nil (pass) by default.
-		// In production, these would shell out to the corresponding athena
-		// subcommands; the MCP layer provides structured pass/fail reporting.
-		checks := make(map[string]policy.CheckFunc)
-		for _, name := range cfg.PolicyGates.RequiredChecks {
-			checkName := name
-			checks[checkName] = func() *policy.Failure {
-				return nil
-			}
-		}
-
-		gate := policy.NewGate(cfg.PolicyGates, checks)
+		gate := policy.NewGate(cfg.PolicyGates, policy.PassingChecks(cfg.PolicyGates.RequiredChecks))
 		opts := policy.GateOptions{
 			RequiredChecks: args.Checks,
 			PolicyLevel:    cfg.Policy.Default,
@@ -534,10 +533,9 @@ func commitLintHandler(baseDir string) sdkmcp.ToolHandlerFor[commitLintArgs, any
 			return r, nil, nil
 		}
 
-		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
-		if err != nil {
-			r, _ := errResult("failed to load config: " + err.Error())
-			return r, nil, nil
+		cfg, errR := loadConfig(baseDir)
+		if errR != nil {
+			return errR, nil, nil
 		}
 
 		validTypes := cfg.ConventionalCommits.Types
@@ -557,10 +555,9 @@ func commitLintHandler(baseDir string) sdkmcp.ToolHandlerFor[commitLintArgs, any
 
 func securityScanHandler(baseDir string) sdkmcp.ToolHandlerFor[securityScanArgs, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args securityScanArgs) (*sdkmcp.CallToolResult, any, error) {
-		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
-		if err != nil {
-			r, _ := errResult("failed to load config: " + err.Error())
-			return r, nil, nil
+		cfg, errR := loadConfig(baseDir)
+		if errR != nil {
+			return errR, nil, nil
 		}
 
 		svc := security.NewService(cfg.Security, security.ExecRunner{})
@@ -580,10 +577,9 @@ func securityScanHandler(baseDir string) sdkmcp.ToolHandlerFor[securityScanArgs,
 
 func contextPackHandler(baseDir string) sdkmcp.ToolHandlerFor[contextPackArgs, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args contextPackArgs) (*sdkmcp.CallToolResult, any, error) {
-		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
-		if err != nil {
-			r, _ := errResult("failed to load config: " + err.Error())
-			return r, nil, nil
+		cfg, errR := loadConfig(baseDir)
+		if errR != nil {
+			return errR, nil, nil
 		}
 
 		svc := athenacontext.NewService(cfg.Context, athenacontext.ExecRunner{})
@@ -605,10 +601,9 @@ func contextPackHandler(baseDir string) sdkmcp.ToolHandlerFor[contextPackArgs, a
 
 func contextBudgetHandler(baseDir string) sdkmcp.ToolHandlerFor[contextBudgetArgs, any] {
 	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args contextBudgetArgs) (*sdkmcp.CallToolResult, any, error) {
-		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
-		if err != nil {
-			r, _ := errResult("failed to load config: " + err.Error())
-			return r, nil, nil
+		cfg, errR := loadConfig(baseDir)
+		if errR != nil {
+			return errR, nil, nil
 		}
 
 		svc := athenacontext.NewService(cfg.Context, athenacontext.ExecRunner{})

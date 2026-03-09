@@ -13,18 +13,7 @@ func runPolicyGate(cmd *cobra.Command, args []string) error {
 	start := time.Now()
 	pr, _ := cmd.Flags().GetString("pr")
 
-	// Build check functions from configured required checks.
-	// Each check returns nil (pass) by default; in production use,
-	// these would run the corresponding athena subcommands.
-	checks := make(map[string]policy.CheckFunc)
-	for _, name := range rc.cfg.PolicyGates.RequiredChecks {
-		checkName := name
-		checks[checkName] = func() *policy.Failure {
-			return nil
-		}
-	}
-
-	gate := policy.NewGate(rc.cfg.PolicyGates, checks)
+	gate := policy.NewGate(rc.cfg.PolicyGates, policy.PassingChecks(rc.cfg.PolicyGates.RequiredChecks))
 	result, err := gate.Evaluate(policy.GateOptions{
 		TargetRef:   pr,
 		PolicyLevel: rc.policy,

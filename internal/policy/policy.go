@@ -49,6 +49,17 @@ func NewGate(cfg config.PolicyGatesConfig, checks map[string]CheckFunc) *Gate {
 	return &Gate{cfg: cfg, checks: checks}
 }
 
+// PassingChecks builds a CheckFunc map where every named check passes.
+// Useful for structural gate evaluation where the caller reports status
+// without actually executing the underlying commands.
+func PassingChecks(names []string) map[string]CheckFunc {
+	checks := make(map[string]CheckFunc, len(names))
+	for _, name := range names {
+		checks[name] = func() *Failure { return nil }
+	}
+	return checks
+}
+
 // Evaluate runs all required checks and returns the gate result.
 func (g *Gate) Evaluate(opts GateOptions) (*GateResult, error) {
 	ref := opts.TargetRef
