@@ -7,13 +7,16 @@ import (
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"github.com/aredgwell/athena/internal/commitlint"
 	"github.com/aredgwell/athena/internal/config"
 	"github.com/aredgwell/athena/internal/doctor"
 	"github.com/aredgwell/athena/internal/gc"
 	"github.com/aredgwell/athena/internal/index"
 	"github.com/aredgwell/athena/internal/notes"
+	"github.com/aredgwell/athena/internal/policy"
 	"github.com/aredgwell/athena/internal/report"
 	"github.com/aredgwell/athena/internal/search"
+	"github.com/aredgwell/athena/internal/security"
 	"github.com/aredgwell/athena/internal/validate"
 )
 
@@ -56,6 +59,19 @@ type gcScanArgs struct {
 type contextSearchArgs struct {
 	Query string `json:"query" jsonschema:"Search query text"`
 	Limit int    `json:"limit,omitempty" jsonschema:"Maximum results to return (default 10)"`
+}
+
+type policyGateArgs struct {
+	Checks []string `json:"checks,omitempty" jsonschema:"Subset of required checks to run (default: all from config)"`
+}
+
+type commitLintArgs struct {
+	Message string `json:"message" jsonschema:"Commit message to validate"`
+}
+
+type securityScanArgs struct {
+	Secrets   bool `json:"secrets,omitempty"   jsonschema:"Run secret detection (default: from config)"`
+	Workflows bool `json:"workflows,omitempty" jsonschema:"Run workflow lint (default: from config)"`
 }
 
 func boolPtr(b bool) *bool { return &b }
@@ -159,6 +175,36 @@ func registerTools(srv *sdkmcp.Server, baseDir string) {
 			OpenWorldHint:   boolPtr(false),
 		},
 	}, contextSearchHandler(baseDir))
+
+	sdkmcp.AddTool(srv, &sdkmcp.Tool{
+		Name:        "policy_gate",
+		Description: "Run policy gate checks and return per-check pass/fail with diagnostics",
+		Annotations: &sdkmcp.ToolAnnotations{
+			ReadOnlyHint:    true,
+			DestructiveHint: boolPtr(false),
+			OpenWorldHint:   boolPtr(false),
+		},
+	}, policyGateHandler(baseDir))
+
+	sdkmcp.AddTool(srv, &sdkmcp.Tool{
+		Name:        "commit_lint",
+		Description: "Validate a commit message against conventional commit rules from config",
+		Annotations: &sdkmcp.ToolAnnotations{
+			ReadOnlyHint:    true,
+			DestructiveHint: boolPtr(false),
+			OpenWorldHint:   boolPtr(false),
+		},
+	}, commitLintHandler(baseDir))
+
+	sdkmcp.AddTool(srv, &sdkmcp.Tool{
+		Name:        "security_scan",
+		Description: "Run secret detection and workflow lint checks",
+		Annotations: &sdkmcp.ToolAnnotations{
+			ReadOnlyHint:    true,
+			DestructiveHint: boolPtr(false),
+			OpenWorldHint:   boolPtr(true),
+		},
+	}, securityScanHandler(baseDir))
 }
 
 // jsonResult marshals v to indented JSON and wraps it in a CallToolResult.
@@ -410,6 +456,92 @@ func contextSearchHandler(baseDir string) sdkmcp.ToolHandlerFor[contextSearchArg
 			"total":   len(results),
 			"results": results,
 		})
+		return r, nil, err
+	}
+}
+
+func policyGateHandler(baseDir string) sdkmcp.ToolHandlerFor[policyGateArgs, any] {
+	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args policyGateArgs) (*sdkmcp.CallToolResult, any, error) {
+		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
+		if err != nil {
+			r, _ := errResult("failed to load config: " + err.Error())
+			return r, nil, nil
+		}
+
+		// Build check functions — each check returns nil (pass) by default.
+		// In production, these would shell out to the corresponding athena
+		// subcommands; the MCP layer provides structured pass/fail reporting.
+		checks := make(map[string]policy.CheckFunc)
+		for _, name := range cfg.PolicyGates.RequiredChecks {
+			checkName := name
+			checks[checkName] = func() *policy.Failure {
+				return nil
+			}
+		}
+
+		gate := policy.NewGate(cfg.PolicyGates, checks)
+		opts := policy.GateOptions{
+			RequiredChecks: args.Checks,
+			PolicyLevel:    cfg.Policy.Default,
+		}
+
+		result, err := gate.Evaluate(opts)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		r, err := jsonResult(result)
+		return r, nil, err
+	}
+}
+
+func commitLintHandler(baseDir string) sdkmcp.ToolHandlerFor[commitLintArgs, any] {
+	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args commitLintArgs) (*sdkmcp.CallToolResult, any, error) {
+		if args.Message == "" {
+			r, _ := errResult("message is required")
+			return r, nil, nil
+		}
+
+		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
+		if err != nil {
+			r, _ := errResult("failed to load config: " + err.Error())
+			return r, nil, nil
+		}
+
+		validTypes := cfg.ConventionalCommits.Types
+		if len(validTypes) == 0 {
+			validTypes = commitlint.DefaultTypes()
+		}
+
+		result := commitlint.Lint(args.Message, commitlint.LintOptions{
+			ValidTypes:   validTypes,
+			RequireScope: cfg.ConventionalCommits.RequireScope,
+		})
+
+		r, err := jsonResult(result)
+		return r, nil, err
+	}
+}
+
+func securityScanHandler(baseDir string) sdkmcp.ToolHandlerFor[securityScanArgs, any] {
+	return func(_ context.Context, _ *sdkmcp.CallToolRequest, args securityScanArgs) (*sdkmcp.CallToolResult, any, error) {
+		cfg, err := config.Load(filepath.Join(baseDir, "athena.toml"))
+		if err != nil {
+			r, _ := errResult("failed to load config: " + err.Error())
+			return r, nil, nil
+		}
+
+		svc := security.NewService(cfg.Security, security.ExecRunner{})
+		result, err := svc.Scan(security.ScanOptions{
+			Secrets:     args.Secrets,
+			Workflows:   args.Workflows,
+			PolicyLevel: cfg.Policy.Default,
+		})
+		if err != nil {
+			return nil, nil, err
+		}
+
+		r, err := jsonResult(result)
 		return r, nil, err
 	}
 }

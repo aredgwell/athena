@@ -386,6 +386,111 @@ func TestContextSearchToolEmptyQuery(t *testing.T) {
 	}
 }
 
+// --- Policy gate, commit lint, security scan tool tests ---
+
+func TestPolicyGateTool(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := policyGateHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, policyGateArgs{})
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	if result.IsError {
+		t.Fatal("unexpected error result")
+	}
+
+	text := result.Content[0].(*sdkmcp.TextContent).Text
+	if !strings.Contains(text, `"ok"`) {
+		t.Errorf("expected ok field in result, got %s", text)
+	}
+}
+
+func TestPolicyGateToolSubset(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := policyGateHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, policyGateArgs{
+		Checks: []string{"check"},
+	})
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+
+	text := result.Content[0].(*sdkmcp.TextContent).Text
+	if !strings.Contains(text, "check") {
+		t.Errorf("expected check in passed list, got %s", text)
+	}
+}
+
+func TestCommitLintTool(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := commitLintHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, commitLintArgs{
+		Message: "feat(mcp): add policy gate tool",
+	})
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	if result.IsError {
+		t.Fatal("unexpected error result")
+	}
+
+	text := result.Content[0].(*sdkmcp.TextContent).Text
+	if !strings.Contains(text, `"valid": true`) {
+		t.Errorf("expected valid commit, got %s", text)
+	}
+}
+
+func TestCommitLintToolInvalid(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := commitLintHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, commitLintArgs{
+		Message: "not a conventional commit",
+	})
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+
+	text := result.Content[0].(*sdkmcp.TextContent).Text
+	if !strings.Contains(text, `"valid": false`) {
+		t.Errorf("expected invalid commit, got %s", text)
+	}
+}
+
+func TestCommitLintToolMissingMessage(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := commitLintHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, commitLintArgs{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !result.IsError {
+		t.Error("expected error for empty message")
+	}
+}
+
+func TestSecurityScanTool(t *testing.T) {
+	dir := setupTestDir(t)
+	handler := securityScanHandler(dir)
+
+	result, _, err := handler(context.Background(), nil, securityScanArgs{})
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	if result.IsError {
+		t.Fatal("unexpected error result")
+	}
+
+	text := result.Content[0].(*sdkmcp.TextContent).Text
+	if !strings.Contains(text, `"ok"`) {
+		t.Errorf("expected ok field in result, got %s", text)
+	}
+}
+
 // --- Server registration test ---
 
 func TestServerRegistration(t *testing.T) {
@@ -412,6 +517,7 @@ func TestServerRegistration(t *testing.T) {
 		"note_new", "note_close", "note_promote", "note_read",
 		"note_list", "check", "check_fix", "index_rebuild",
 		"gc_scan", "doctor", "report", "context_search",
+		"policy_gate", "commit_lint", "security_scan",
 	}
 
 	toolNames := make(map[string]bool)
